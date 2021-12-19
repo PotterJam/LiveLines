@@ -7,6 +7,10 @@ export function NavMenu(props) {
   const [collapsed, setCollapsed] = useState(true);
   const toggleNavbar = () => setCollapsed(!collapsed);
 
+  const loginWithGithub = () => {
+    // todo
+  }
+
   return (
     <header>
       <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
@@ -23,6 +27,11 @@ export function NavMenu(props) {
               </NavItem>
               <NavItem>
                 <NavLink tag={Link} className="text-dark" to="/fetch-data">Fetch data</NavLink>
+              </NavItem>
+              <NavItem className="ms-2 row align-items-center">
+                <button className="btn btn-outline-secondary btn-sm" onClick={loginWithGithub}>
+                  <i className="bi bi-github" /> &nbsp; Login with Github
+                </button>
               </NavItem>
             </ul>
           </Collapse>
