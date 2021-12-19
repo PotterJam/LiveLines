@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './NavMenu.css';
@@ -6,11 +6,28 @@ import './NavMenu.css';
 export function NavMenu(props) {
   const [collapsed, setCollapsed] = useState(true);
   const toggleNavbar = () => setCollapsed(!collapsed);
+  
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  const loginWithGithub = () => {
-    // todo
+  useEffect(() => {
+    const checkIfLoggedIn = async () =>
+    {
+      const response = await fetch('api/authenticated');
+      setLoggedIn(response.ok);
+    }
+    checkIfLoggedIn();
+  }, []);
+
+  const loginWithGithub = `api/login?returnUrl=${window.location.origin}/`;
+
+  const loginOrProfile = loggedIn => {
+    return loggedIn
+      ? <span>Logged in!</span>
+      : <a href={loginWithGithub} className="btn btn-outline-secondary btn-sm" role="button">
+          <i className="bi bi-github" /> &nbsp; Login with Github
+        </a>
   }
-
+  
   return (
     <header>
       <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
@@ -29,9 +46,7 @@ export function NavMenu(props) {
                 <NavLink tag={Link} className="text-dark" to="/fetch-data">Fetch data</NavLink>
               </NavItem>
               <NavItem className="ms-2 row align-items-center">
-                <button className="btn btn-outline-secondary btn-sm" onClick={loginWithGithub}>
-                  <i className="bi bi-github" /> &nbsp; Login with Github
-                </button>
+                {loginOrProfile(loggedIn)}
               </NavItem>
             </ul>
           </Collapse>

@@ -12,8 +12,8 @@ export default function App() {
     <Layout>
         <Routes>
             <Route exact path='/' element={<Home />} />
-            <Route path='/counter' element={<Counter />} />
-            <Route path='/fetch-data' element={<FetchData />} />
+            <Route exact path='/counter' element={<Counter />} />
+            <Route exact path='/fetch-data' element={<FetchData />} />
         </Routes>
     </Layout>
   );

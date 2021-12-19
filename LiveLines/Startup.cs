@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -9,17 +10,41 @@ namespace LiveLines
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
-
-        public Startup(IConfiguration configuration)
+        private IConfigurationRoot Configuration { get; }
+        
+        public Startup()
         {
-            Configuration = configuration;
+            Configuration = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .Build();
         }
+        
+        private GitHubConfiguration GitHubConfiguration => new GitHubConfiguration
+        (
+            ClientId: Configuration.GetValue<string>("GITHUB_CLIENT_ID"),
+            ClientSecret: Configuration.GetValue<string>("GITHUB_CLIENT_SECRET")
+        );
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddCors(o => o.AddPolicy("cors", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
+
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = "GitHub";
+                })
+                .AddCookie()
+                .AddGitHubOAuth(GitHubConfiguration);
+            
+            services.AddControllers();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
@@ -44,12 +69,15 @@ namespace LiveLines
             app.UseSpaStaticFiles();
 
             app.UseRouting();
+            
+            app.UseCors("cors");
 
-            app.UseEndpoints(endpoints =>
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(routes =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                routes.MapControllers();
             });
 
             app.UseSpa(spa =>
