@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 
-export class FetchData extends Component {
-  static displayName = FetchData.name;
+export function FetchData() {  
+  const [state, setState] = useState({ forecasts: [], loading: true });
 
-  constructor(props) {
-    super(props);
-    this.state = { forecasts: [], loading: true };
-  }
+  useEffect(() => {
+    const populateWeatherData = async () =>
+    {
+      const response = await fetch('weatherforecast');
+      const data = await response.json();
+      setState({ forecasts: data, loading: false });
+    }
+    populateWeatherData();
+  }, []);
 
-  componentDidMount() {
-    this.populateWeatherData();
-  }
-
-  static renderForecastsTable(forecasts) {
-    return (
+  const renderForecastsTable = forecasts => (
       <table className='table table-striped' aria-labelledby="tabelLabel">
         <thead>
           <tr>
@@ -35,12 +35,10 @@ export class FetchData extends Component {
         </tbody>
       </table>
     );
-  }
 
-  render() {
-    let contents = this.state.loading
+    let contents = state.loading
       ? <p><em>Loading...</em></p>
-      : FetchData.renderForecastsTable(this.state.forecasts);
+      : renderForecastsTable(state.forecasts);
 
     return (
       <div>
@@ -49,11 +47,4 @@ export class FetchData extends Component {
         {contents}
       </div>
     );
-  }
-
-  async populateWeatherData() {
-    const response = await fetch('weatherforecast');
-    const data = await response.json();
-    this.setState({ forecasts: data, loading: false });
-  }
 }
