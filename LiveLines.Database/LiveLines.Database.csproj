@@ -17,4 +17,8 @@
       <PackageReference Include="Npgsql" Version="6.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\LiveLines.Api\LiveLines.Api.csproj" />
+    </ItemGroup>
+
 </Project>

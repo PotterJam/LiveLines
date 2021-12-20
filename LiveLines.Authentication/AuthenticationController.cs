@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LiveLines.Authentication
 {
-    [ApiController]
-    [Route("api")]
+    [ApiController, Route("api")]
     public class AuthenticationController : ControllerBase
     {
         [HttpGet, Route("login")]

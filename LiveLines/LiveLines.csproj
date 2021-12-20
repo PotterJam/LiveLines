@@ -15,8 +15,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\LiveLines.Api\LiveLines.Api.csproj" />
         <ProjectReference Include="..\LiveLines.Authentication\LiveLines.Authentication.csproj" />
         <ProjectReference Include="..\LiveLines.Database\LiveLines.Database.csproj" />
+        <ProjectReference Include="..\LiveLines.Lines\LiveLines.Lines.csproj" />
+        <ProjectReference Include="..\LiveLines.Users\LiveLines.Users.csproj" />
     </ItemGroup>
 
     <ItemGroup>

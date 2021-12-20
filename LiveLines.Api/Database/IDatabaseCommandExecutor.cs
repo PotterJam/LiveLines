@@ -2,7 +2,7 @@
 using System.Data;
 using System.Threading.Tasks;
 
-namespace LiveLines.Database
+namespace LiveLines.Api.Database
 {
     public interface IDatabaseCommandExecutor
     {
