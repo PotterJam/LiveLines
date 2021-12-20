@@ -16,6 +16,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\LiveLines.Authentication\LiveLines.Authentication.csproj" />
+        <ProjectReference Include="..\LiveLines.Database\LiveLines.Database.csproj" />
     </ItemGroup>
 
     <ItemGroup>
