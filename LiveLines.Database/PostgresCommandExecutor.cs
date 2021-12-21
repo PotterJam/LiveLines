@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data;
+using System.Data.Common;
 using System.Threading.Tasks;
 using LiveLines.Api.Database;
 using Microsoft.Extensions.Configuration;
@@ -24,16 +24,16 @@ namespace LiveLines.Database
             }.ToString();
         }
 
-        public async Task ExecuteCommand(Func<IDbCommand, Task> action)
+        public async Task ExecuteCommand(Func<DbCommand, Task> action)
         {
             using var conn = new NpgsqlConnection(_connectionString);
-            conn.Open();
+            await conn.OpenAsync();
  
             using var command = conn.CreateCommand();
             await action(command);
         }
         
-        public async Task<T> ExecuteCommand<T>(Func<IDbCommand, Task<T>> action)
+        public async Task<T> ExecuteCommand<T>(Func<DbCommand, Task<T>> action)
         {
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();

@@ -1,7 +1,9 @@
-﻿using System.Net.Http;
+﻿using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
+using LiveLines.Api.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Http;
@@ -11,8 +13,10 @@ namespace LiveLines
 {
     public static class OAuthProviderExtensions
     {
+        private const string GitHubProvider = "GitHub";
+
         public static AuthenticationBuilder AddGitHubOAuth(this AuthenticationBuilder authBuilder, GitHubConfiguration gitHubConfiguration) =>
-            authBuilder.AddOAuth("GitHub", options =>
+            authBuilder.AddOAuth(GitHubProvider, options =>
                 {
                     options.ClientId = gitHubConfiguration.ClientId;
                     options.ClientSecret = gitHubConfiguration.ClientSecret;
@@ -43,8 +47,14 @@ namespace LiveLines
                                 HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
                             response.EnsureSuccessStatusCode();
 
-                            var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-                            context.RunClaimActions(user.RootElement);
+                            var userJson = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                            context.RunClaimActions(userJson.RootElement);
+
+                            var gitHubUsername = context.Identity.Claims.Single(x => x.Type == "urn:github:login").Value;
+
+                            var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
+                            var user = await userService.CreateUser(GitHubProvider, gitHubUsername);
+                            // TODO: add users internal id to their claims
                         }
                     };
                 });

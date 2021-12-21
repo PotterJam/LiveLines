@@ -12,14 +12,14 @@ namespace LiveLines.Users
             _userStore = userStore;
         }
         
-        public async Task<User> CreateUser(string email)
+        public async Task<User> CreateUser(string provider, string username)
         {
-            return await _userStore.CreateUser(email);
+            return await _userStore.CreateUser(provider, username);
         }
         
-        public async Task<User> GetUser(string email)
+        public async Task<User> GetUser(string username)
         {
-            return await _userStore.GetUser(email);
+            return await _userStore.GetUser(username);
         }
         
         public async Task<User> GetUser(int userId)

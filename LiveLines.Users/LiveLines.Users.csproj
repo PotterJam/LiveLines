@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LiveLines.Api\LiveLines.Api.csproj" />
+      <ProjectReference Include="..\LiveLines.Extensions\LiveLines.Extensions.csproj" />
     </ItemGroup>
 
 </Project>

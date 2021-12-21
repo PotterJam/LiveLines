@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using LiveLines.Api.Users;
 
 namespace Extensions
@@ -7,7 +8,7 @@ namespace Extensions
     {
         public static User GetUser(this ClaimsPrincipal claimsPrincipal)
         {
-            return new User(claimsPrincipal.Identity?.Name ?? "Unknown User");
+            throw new NotImplementedException();
         }
     }
 }
