@@ -1,3 +1,4 @@
+using LiveLines.Security;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,12 +19,6 @@ namespace LiveLines
                 .AddEnvironmentVariables()
                 .Build();
         }
-        
-        private GitHubConfiguration GitHubConfiguration => new GitHubConfiguration
-        (
-            ClientId: Configuration.GetValue<string>("GITHUB_CLIENT_ID"),
-            ClientSecret: Configuration.GetValue<string>("GITHUB_CLIENT_SECRET")
-        );
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -35,6 +30,8 @@ namespace LiveLines
                     .AllowAnyHeader();
             }));
 
+            var oAuthConfigurer = new OAuthConfigurer(Configuration);
+
             services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -42,8 +39,8 @@ namespace LiveLines
                     options.DefaultChallengeScheme = "GitHub";
                 })
                 .AddCookie()
-                .AddGitHubOAuth(GitHubConfiguration);
-            
+                .AddOAuth("GitHub", oAuthConfigurer.GitHub);
+
             services.AddControllers();
 
             // In production, the React files will be served from this directory

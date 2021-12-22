@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LiveLines.Authentication
@@ -12,15 +13,11 @@ namespace LiveLines.Authentication
             return Challenge(new AuthenticationProperties { RedirectUri = returnUrl });
         }
 
+        [Authorize]
         [HttpGet, Route("authenticated")]
         public IActionResult Authenticated()
         {
-            if (User.Identity?.IsAuthenticated is true)
-            {
-                return Ok();
-            }
-            
-            return NotFound();
+            return Ok();
         }
     }
 }

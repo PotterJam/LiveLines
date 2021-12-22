@@ -54,5 +54,5 @@ namespace LiveLines.Users
         {
             throw new NotImplementedException();
         }
-        }
+    }
 }

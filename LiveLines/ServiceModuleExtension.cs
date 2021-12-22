@@ -3,6 +3,7 @@ using LiveLines.Api.Lines;
 using LiveLines.Api.Users;
 using LiveLines.Database;
 using LiveLines.Lines;
+using LiveLines.Security;
 using LiveLines.Users;
 using Microsoft.Extensions.DependencyInjection;
 
