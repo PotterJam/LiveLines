@@ -19,9 +19,9 @@ namespace LiveLines.Lines
             return await _linesStore.GetLines(user);
         }
 
-        public async Task<Line> CreateLine(User user, Line line)
+        public async Task<Line> CreateLine(User user, string body)
         {
-            return await _linesStore.CreateLine(user, line);
+            return await _linesStore.CreateLine(user, body);
         }
     }
 }

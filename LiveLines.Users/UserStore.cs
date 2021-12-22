@@ -37,9 +37,7 @@ namespace LiveLines.Users
                 var id = (int?) await cmd.ExecuteScalarAsync();
 
                 if (id == null)
-                {
                     throw new UserStoreException("Tried to create user, nothing got returned");
-                }
 
                 return new User(id.Value, username);
             });

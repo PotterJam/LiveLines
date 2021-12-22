@@ -7,6 +7,6 @@ namespace LiveLines.Api.Lines
     public interface ILinesService
     {
         Task<IEnumerable<Line>> GetLines(User user);
-        Task<Line> CreateLine(User user, Line line);
+        Task<Line> CreateLine(User user, string body);
     }
 }

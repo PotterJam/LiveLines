@@ -12,5 +12,10 @@ namespace Extensions
 
             command.Parameters.Add(parameter);
         }
+
+        public static T Get<T>(this DbDataReader reader, string paramName)
+        {
+            return (T) reader[paramName];
+        }
     }
 }

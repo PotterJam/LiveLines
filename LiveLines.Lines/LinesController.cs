@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Extensions;
 using LiveLines.Api.Lines;
@@ -18,21 +20,24 @@ namespace LiveLines.Lines
             _linesService = linesService;
         }
         
+        public record LineResponse(int Id, string Message, DateTime CreatedAt);
+        
         [HttpGet, Route("lines")]
-        public async Task<IEnumerable<Line>> FetchLines()
+        public async Task<IEnumerable<LineResponse>> FetchLines()
         {
             var user = User.GetLoggedInUser();
-            return await _linesService.GetLines(user);
+            var lines = await _linesService.GetLines(user);
+            return lines.Select(line => new LineResponse(line.Id, line.Message, line.CreatedAt));
         }
-        
+
         public record LineRequest(string Message);
         
-        [HttpGet, Route("line")]
-        public async Task<Line> CreateLine([FromBody] LineRequest lineRequest)
+        [HttpPost, Route("line")]
+        public async Task<LineResponse> CreateLine([FromBody] LineRequest lineRequest)
         {
             var user = User.GetLoggedInUser();
-            var newLine = new Line(lineRequest.Message);
-            return await _linesService.CreateLine(user, newLine);
+            var line = await _linesService.CreateLine(user, lineRequest.Message);
+            return new LineResponse(line.Id, line.Message, line.CreatedAt);
         }
     }
 }

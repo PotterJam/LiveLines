@@ -1,4 +1,6 @@
-﻿namespace LiveLines.Api.Lines
+﻿using System;
+
+namespace LiveLines.Api.Lines
 {
-    public record Line(string Message);
+    public record Line(int Id, string Message, DateTime CreatedAt);
 }
