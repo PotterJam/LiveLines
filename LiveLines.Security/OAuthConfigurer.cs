@@ -58,7 +58,8 @@ namespace LiveLines.Security
                     var userJson = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
                     context.RunClaimActions(userJson.RootElement);
 
-                    var gitHubUsername = context.Identity.Claims.Single(x => x.Type == "urn:github:login").Value;
+                    // Dammit operator since we should definitely have the identity at this point
+                    var gitHubUsername = context.Identity!.Claims.Single(x => x.Type == "urn:github:login").Value;
 
                     var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
                     var user = await userService.CreateUser("GitHub", gitHubUsername);

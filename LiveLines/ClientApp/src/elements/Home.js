@@ -8,8 +8,10 @@ export function Home() {
   useEffect(() => {
     const getLines = async () => {
       const linesResp = await getData("api/lines");
-      const lines = await linesResp.json();
-      setLines(lines);
+      if (linesResp.ok) {
+        const lines = await linesResp.json();
+        setLines(lines);
+      }
     }
     getLines();
   }, []);
