@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace LiveLines.Lines
+namespace LiveLines.Lines;
+
+public class LinesStoreException : Exception
 {
-    public class LinesStoreException : Exception
+    public LinesStoreException(string msg) : base(msg)
     {
-        public LinesStoreException(string msg) : base(msg)
-        {
-        }
     }
 }

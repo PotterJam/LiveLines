@@ -1,8 +1,7 @@
-﻿namespace LiveLines.Security
+﻿namespace LiveLines.Security;
+
+public static class LoggedInClaims
 {
-    public static class LoggedInClaims
-    {
-        public const string InternalUserId = "InternalUserId";
-        public const string Username = "Username";
-    }
+    public const string InternalUserId = "InternalUserId";
+    public const string Username = "Username";
 }

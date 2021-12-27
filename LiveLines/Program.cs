@@ -1,17 +1,66 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using LiveLines;
+using LiveLines.Security;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
-namespace LiveLines
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddEnvironmentVariables().Build();
+
+builder.Services.AddCors(o => o.AddPolicy("cors", corsBuilder =>
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+    corsBuilder.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+}));
 
-        private static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
-    }
+var oAuthConfigurer = new OAuthConfigurer(builder.Configuration);
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = "GitHub";
+    })
+    .AddCookie()
+    .AddOAuth("GitHub", oAuthConfigurer.GitHub);
+
+builder.Services.AddControllers();
+
+// In production, the React files will be served from this directory
+builder.Services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
+
+// DI lives here
+builder.Services.AddServices();
+
+var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
+{
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseSpaStaticFiles();
+
+app.UseRouting();
+
+app.UseCors("cors");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseEndpoints(routes =>
+{
+    routes.MapControllers();
+});
+
+app.UseSpa(spa =>
+{
+    spa.Options.SourcePath = "ClientApp";
+});
+
+app.MapFallbackToFile("index.html");
+
+app.Run();

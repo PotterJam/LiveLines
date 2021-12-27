@@ -3,13 +3,14 @@
     "LiveLines": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "applicationUrl": "https://localhost:7280;http://localhost:5280",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "GITHUB_CLIENT_ID": "replace_me",
         "GITHUB_CLIENT_SECRET": "replace_me",
         "DB_NAME": "livelines",
         "DB_HOST": "localhost",
+        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy",
         "DB_PORT": "5432",
         "DB_USER_NAME": "dev",
         "DB_PASSWORD": "test",

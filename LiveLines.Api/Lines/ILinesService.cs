@@ -2,11 +2,10 @@
 using System.Threading.Tasks;
 using LiveLines.Api.Users;
 
-namespace LiveLines.Api.Lines
+namespace LiveLines.Api.Lines;
+
+public interface ILinesService
 {
-    public interface ILinesService
-    {
-        Task<IEnumerable<Line>> GetLines(User user);
-        Task<Line> CreateLine(User user, string body);
-    }
+    Task<IEnumerable<Line>> GetLines(User user);
+    Task<Line> CreateLine(User user, string body);
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace LiveLines.Users
+namespace LiveLines.Users;
+
+public class UserStoreException : Exception
 {
-    public class UserStoreException : Exception
+    public UserStoreException(string msg) : base(msg)
     {
-        public UserStoreException(string msg) : base(msg)
-        {
-        }
     }
 }

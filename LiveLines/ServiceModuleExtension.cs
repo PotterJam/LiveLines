@@ -7,18 +7,17 @@ using LiveLines.Security;
 using LiveLines.Users;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace LiveLines
+namespace LiveLines;
+
+public static class ServiceModuleExtension
 {
-    public static class ServiceModuleExtension
+    public static IServiceCollection AddServices(this IServiceCollection services)
     {
-        public static IServiceCollection AddServices(this IServiceCollection services)
-        {
-            return services
-                .AddSingleton<IDatabaseCommandExecutor, PostgresCommandExecutor>()
-                .AddSingleton<IUserService, UserService>()
-                .AddSingleton<IUserStore, UserStore>()
-                .AddSingleton<ILinesService, LinesService>()
-                .AddSingleton<ILinesStore, LinesStore>();
-        }
+        return services
+            .AddSingleton<IDatabaseCommandExecutor, PostgresCommandExecutor>()
+            .AddSingleton<IUserService, UserService>()
+            .AddSingleton<IUserStore, UserStore>()
+            .AddSingleton<ILinesService, LinesService>()
+            .AddSingleton<ILinesStore, LinesStore>();
     }
 }
