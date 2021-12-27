@@ -1,28 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState, useContext } from 'react';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import  { UserContext } from '../auth/UserContext';
 import './NavMenu.css';
 
 export function NavMenu(props) {
   const [collapsed, setCollapsed] = useState(true);
   const toggleNavbar = () => setCollapsed(!collapsed);
   
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const checkIfLoggedIn = async () =>
-    {
-      const response = await fetch('api/authenticated');
-      setLoggedIn(response.ok);
-    }
-    checkIfLoggedIn();
-  }, []);
+  const { user } = useContext(UserContext);
 
   const loginWithGithub = `api/login?returnUrl=${window.location.origin}/`;
 
-  const loginOrProfile = loggedIn => {
-    return loggedIn
-      ? <span>Logged in!</span>
+  const loginOrProfile = () => {
+    return user.authenticated
+      ? <span>{user.username}</span>
       : <a href={loginWithGithub} className="btn btn-outline-secondary btn-sm" role="button">
           <i className="bi bi-github" /> &nbsp; Login with Github
         </a>
@@ -40,7 +32,7 @@ export function NavMenu(props) {
                 <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
               </NavItem>
               <NavItem className="ms-2 row align-items-center">
-                {loginOrProfile(loggedIn)}
+                {loginOrProfile()}
               </NavItem>
             </ul>
           </Collapse>

@@ -1,20 +1,23 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {getData, postData} from "../Api";
+import { UserContext } from '../auth/UserContext';
 
 export function Home() {
   const [line, setLine] = useState("");
   const [lines, setLines] = useState([]);
-  
+  const { user } = useContext(UserContext);
+
   useEffect(() => {
     const getLines = async () => {
       const linesResp = await getData("api/lines");
-      if (linesResp.ok) {
-        const lines = await linesResp.json();
-        setLines(lines);
-      }
+      const lines = await linesResp.json();
+      setLines(lines);
     }
-    getLines();
-  }, []);
+
+    if (user.authenticated) {
+        getLines();
+    }
+  }, [user.authenticated]);
 
   const submitLine = async e => {
     if (e.key !== 'Enter') {
