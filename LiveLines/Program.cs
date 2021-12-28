@@ -21,7 +21,11 @@ builder.Services.AddAuthentication(options =>
         options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = "GitHub";
     })
-    .AddCookie()
+    .AddCookie(options =>
+    {
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    })
     .AddOAuth("GitHub", oAuthConfigurer.GitHub);
 
 builder.Services.AddControllers();
