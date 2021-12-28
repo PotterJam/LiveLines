@@ -1,8 +1,8 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {getData, postData} from "../Api";
+import React, { useContext, useEffect, useState } from 'react';
+import { getData, postData } from "../Api";
 import { UserContext } from '../auth/UserContext';
+import { LineTimeline } from "../components/LineTimeline";
 import { parseISO, format } from 'date-fns'
-import { Chrono } from "react-chrono";
 
 export function Home() {
   const [line, setLine] = useState("");
@@ -54,20 +54,8 @@ export function Home() {
         onKeyDown={submitLine}
       />
 
-      {/* To build a custom component of later (https://github.com/prabhuignoto/react-chrono) */}
-      <Chrono
-        items={lines}
-        mode="VERTICAL"
-        allowDynamicUpdate="true"
-        hideControls="true"
-        useReadMore="false"
-        cardHeight="50"
-        theme={{
-          primary: "firebrick",
-          secondary: "black",
-          cardForeColor: "black",
-          titleColor: "white"
-        }}
+      <LineTimeline
+        lines={lines}
       />
       
     </div>
