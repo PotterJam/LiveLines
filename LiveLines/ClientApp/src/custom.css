@@ -1,28 +1,6 @@
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
-}
-
-code {
-  color: #E01A76;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.btn-secondary {
-  color: #fff;
-  background-color: #fff;
-  border-color: #333333;
-}
-
-.input-line {
-  width: 600px;
-  font-size: xx-large;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Workaround for chrono component package */
 .show-more {

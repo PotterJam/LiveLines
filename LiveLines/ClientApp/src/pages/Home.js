@@ -44,9 +44,9 @@ export function Home() {
   }
 
   return (
-    <div className="d-flex p-2 flex-column align-items-center">
+    <div className="flex mt-4 p-2 flex-col items-center">
       <input
-        className="input-line p-2 m-2 mb-4"
+        className="border-2 border-slate-500 rounded w-4/5 md:w-3/5 lg:w-1/2 xl:w-2/5 text-3xl p-3 m-2 mb-4"
         type="text"
         value={line}
         placeholder="What's today's line?"
