@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -63,9 +64,13 @@ public class OAuthConfigurer
 
                 var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
                 var user = await userService.CreateUser("GitHub", gitHubUsername);
-                    
+
                 context.Identity.AddClaim(new Claim(LoggedInClaims.InternalUserId, user.InternalId.ToString()));
                 context.Identity.AddClaim(new Claim(LoggedInClaims.Username, user.Username));
+                
+                context.Properties.AllowRefresh = true;
+                context.Properties.IsPersistent = true;
+                context.Properties.ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7);
             }
         };
     }
