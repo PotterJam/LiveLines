@@ -3,9 +3,9 @@ import { NavMenu } from './NavMenu';
 
 export function Layout({ children }) {
   return (
-    <div>
+    <div className="bg-gray-50 h-full">
       <NavMenu />
-      <div className="contents bg-gray-100">
+      <div className="contents">
         {children}
       </div>
     </div>

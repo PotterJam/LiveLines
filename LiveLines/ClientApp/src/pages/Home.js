@@ -9,11 +9,12 @@ export function Home() {
   const [lines, setLines] = useState([]);
   const { user } = useContext(UserContext);
 
-  const FormatLineForTimeline = ({ message, createdAt }) => {
+  const FormatLineForTimeline = ({ id, message, createdAt }) => {
     const date = parseISO(createdAt);
     return {
-      title: format(date, 'do MMMM yy'),
-      cardDetailedText: message
+      id: id,
+      createdAt: format(date, 'do MMMM yyy'),
+      message: message
     };
   }
 
@@ -44,19 +45,21 @@ export function Home() {
   }
 
   return (
-    <div className="flex mt-4 p-2 flex-col items-center">
-      <input
-        className="border-2 border-slate-500 rounded w-4/5 md:w-3/5 lg:w-1/2 xl:w-2/5 text-3xl p-3 m-2 mb-4"
-        type="text"
-        value={line}
-        placeholder="What's today's line?"
-        onChange={e => { setLine(e.target.value); }}
-        onKeyDown={submitLine}
-      />
-
-      <LineTimeline
-        lines={lines}
-      />
+    <div className="h-full flex mt-4 p-2 flex-col items-center">
+      <div className="flex flex-col w-4/5 lg:w-3/5 xl:w-2/5 ">
+        <input
+          className="border-2 border-slate-500 rounded text-3xl p-3 m-2 mb-4"
+          type="text"
+          value={line}
+          placeholder="What's today's line?"
+          onChange={e => { setLine(e.target.value); }}
+          onKeyDown={submitLine}
+        />
+  
+        <LineTimeline
+          lines={lines}
+        />
+      </div>
       
     </div>
   );
