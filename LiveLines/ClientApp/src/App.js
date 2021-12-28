@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { Layout } from './elements/Layout';
-import { Home } from './elements/Home';
+import { Layout } from './components/Layout';
+import { Home } from './pages/Home';
 import { UserContext } from './auth/UserContext';
 
 import './custom.css'
