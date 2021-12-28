@@ -13,14 +13,14 @@ public class LinesService : ILinesService
     {
         _linesStore = linesStore;
     }
-        
-    public async Task<IEnumerable<Line>> GetLines(User user)
+
+    public async Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser)
     {
-        return await _linesStore.GetLines(user);
+        return await _linesStore.GetLines(loggedInUser);
     }
 
-    public async Task<Line> CreateLine(User user, string body)
-    {
-        return await _linesStore.CreateLine(user, body);
+    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body)
+    { 
+        return await _linesStore.CreateLine(loggedInUser, body);
     }
 }

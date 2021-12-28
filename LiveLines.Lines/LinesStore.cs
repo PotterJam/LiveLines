@@ -18,11 +18,11 @@ public class LinesStore : ILinesStore
         _dbExecutor = dbExecutor;
     }
 
-    public async Task<IEnumerable<Line>> GetLines(User user)
+    public async Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
-            cmd.AddParam("@userid", user.InternalId);
+            cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
                     SELECT id, body, created_at
@@ -43,11 +43,11 @@ public class LinesStore : ILinesStore
         });
     }
 
-    public async Task<Line> CreateLine(User user, string body)
+    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
-            cmd.AddParam("@userid", user.InternalId);
+            cmd.AddParam("@userid", loggedInUser.InternalId);
             cmd.AddParam("@body", body);
 
             cmd.CommandText = @"
@@ -55,21 +55,21 @@ public class LinesStore : ILinesStore
                     VALUES (@userid, @body)
                     RETURNING id;";
 
-            var id = (int?) await cmd.ExecuteScalarAsync();
+            var guid = (Guid?) await cmd.ExecuteScalarAsync();
 
-            if (id == null)
-                throw new LinesStoreException($"Tried to create line for user {user.InternalId}, id not returned");
+            if (guid == null)
+                throw new LinesStoreException($"Tried to create line for user {loggedInUser.InternalId}, id not returned");
 
-            return await GetLine(user, id.Value);
+            return await GetLine(loggedInUser, guid.Value);
         });
     }
 
-    private async Task<Line> GetLine(User user, int lineId)
+    private async Task<Line> GetLine(LoggedInUser loggedInUser, Guid lineId)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
             cmd.AddParam("@lineid", lineId);
-            cmd.AddParam("@userid", user.InternalId);
+            cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
                     SELECT id, body, created_at
@@ -81,15 +81,15 @@ public class LinesStore : ILinesStore
             var reader = await cmd.ExecuteReaderAsync();
 
             if (!await reader.ReadAsync())
-                throw new LinesStoreException($"Couldn't get line {lineId} for user {user.InternalId}");
+                throw new LinesStoreException($"Couldn't get line {lineId} for user {loggedInUser.InternalId}");
 
             return ReadLine(reader);
         });
     }
-        
+
     private Line ReadLine(DbDataReader reader)
     {
-        var id = reader.Get<int>("id");
+        var id = reader.Get<Guid>("id");
         var body = reader.Get<string>("body");
         var createdAt = reader.Get<DateTime>("created_at");
 
