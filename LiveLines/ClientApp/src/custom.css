@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-html,body,#root {
-    height: 100%;
+@layer base {
+    html, body {
+        @apply bg-slate-50
+    }
 }

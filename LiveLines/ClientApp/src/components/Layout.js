@@ -3,7 +3,7 @@ import { NavMenu } from './NavMenu';
 
 export function Layout({ children }) {
   return (
-    <div className="bg-gray-50 h-full">
+    <div>
       <NavMenu />
       <div className="contents">
         {children}
