@@ -5,7 +5,7 @@ export function Layout({ children }) {
   return (
     <div>
       <NavMenu />
-      <div className="contents bg-gray-100">
+      <div className="contents">
         {children}
       </div>
     </div>

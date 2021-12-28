@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Workaround for chrono component package */
-.show-more {
-  display: none !important;
+@layer base {
+    html, body {
+        @apply bg-slate-50
+    }
 }
