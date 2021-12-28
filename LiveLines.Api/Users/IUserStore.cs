@@ -4,7 +4,7 @@ namespace LiveLines.Api.Users;
 
 public interface IUserStore
 {
-    Task<User> CreateUser(string provider, string username);
-    Task<User> GetUser(string username);
-    Task<User> GetUser(int userId);
+    Task<LoggedInUser> CreateUser(string provider, string username);
+    Task<LoggedInUser> GetUser(string username);
+    Task<LoggedInUser> GetUser(int userId);
 }

@@ -19,9 +19,9 @@ public class LinesController : ControllerBase
     {
         _linesService = linesService;
     }
-        
-    public record LineResponse(int Id, string Message, DateTime CreatedAt);
-        
+
+    public record LineResponse(Guid Id, string Message, DateTime CreatedAt);
+    
     [HttpGet, Route("lines")]
     public async Task<IEnumerable<LineResponse>> FetchLines()
     {
@@ -31,7 +31,7 @@ public class LinesController : ControllerBase
     }
 
     public record LineRequest(string Message);
-        
+
     [HttpPost, Route("line")]
     public async Task<LineResponse> CreateLine([FromBody] LineRequest lineRequest)
     {

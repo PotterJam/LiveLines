@@ -15,7 +15,7 @@ public class UserStore : IUserStore
         _dbExecutor = dbExecutor;
     }
 
-    public async Task<User> CreateUser(string provider, string username)
+    public async Task<LoggedInUser> CreateUser(string provider, string username)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
@@ -34,21 +34,21 @@ public class UserStore : IUserStore
                         (SELECT id FROM users WHERE username = @username)
                     ) AS id;";
 
-            var id = (int?) await cmd.ExecuteScalarAsync();
+            var guid = (Guid?) await cmd.ExecuteScalarAsync();
 
-            if (id == null)
+            if (guid == null)
                 throw new UserStoreException("Tried to create user, nothing got returned");
 
-            return new User(id.Value, username);
+            return new LoggedInUser(guid.Value, username);
         });
     }
 
-    public Task<User> GetUser(string username)
+    public Task<LoggedInUser> GetUser(string username)
     {
         throw new NotImplementedException();
     }
 
-    public Task<User> GetUser(int userId)
+    public Task<LoggedInUser> GetUser(int userId)
     {
         throw new NotImplementedException();
     }

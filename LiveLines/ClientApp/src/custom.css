@@ -18,3 +18,13 @@ code {
   background-color: #fff;
   border-color: #333333;
 }
+
+.input-line {
+  width: 600px;
+  font-size: xx-large;
+}
+
+/* Workaround for chrono component package */
+.show-more {
+  display: none !important;
+}

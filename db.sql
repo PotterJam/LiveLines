@@ -1,9 +1,11 @@
+CREATE EXTENSION "uuid-ossp";
+
 CREATE ROLE dev;
 GRANT CONNECT ON DATABASE livelines TO dev;
 
 CREATE TABLE users
 (
-    id serial PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     provider TEXT NOT NULL,
     username TEXT UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -13,15 +15,13 @@ CREATE TABLE users
 CREATE INDEX users_username_idx ON users (username);
 
 GRANT UPDATE, INSERT, SELECT ON TABLE users TO dev;
-GRANT ALL ON SEQUENCE users_id_seq TO dev;
 
 CREATE TABLE lines
 (
-    id serial PRIMARY KEY,
-    user_id INTEGER REFERENCES users (id) NOT NULL,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users (id) NOT NULL,
     body TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
 GRANT UPDATE, INSERT, SELECT ON TABLE lines TO dev;
-GRANT ALL ON SEQUENCE lines_id_seq TO dev;

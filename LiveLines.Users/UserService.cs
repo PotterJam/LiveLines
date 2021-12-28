@@ -12,17 +12,17 @@ public class UserService : IUserService
         _userStore = userStore;
     }
         
-    public async Task<User> CreateUser(string provider, string username)
+    public async Task<LoggedInUser> CreateUser(string provider, string username)
     {
         return await _userStore.CreateUser(provider, username);
     }
-        
-    public async Task<User> GetUser(string username)
+
+    public async Task<LoggedInUser> GetUser(string username)
     {
         return await _userStore.GetUser(username);
     }
         
-    public async Task<User> GetUser(int userId)
+    public async Task<LoggedInUser> GetUser(int userId)
     {
         return await _userStore.GetUser(userId);
     }
