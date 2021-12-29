@@ -4,7 +4,7 @@ import  { UserContext } from '../auth/UserContext';
 import { FaGithub } from 'react-icons/fa';
 
 export function NavMenu(props) {
-  const { user } = useContext(UserContext);
+  const { user, loginAttempted } = useContext(UserContext);
 
   const loginWithGithub = `api/login?returnUrl=${window.location.origin}/`;
 
@@ -33,7 +33,7 @@ export function NavMenu(props) {
                 <Link tag={Link} className="mr-3 text-lg text-slate-800" to="/">Home</Link>
               </div>
               <div className="mx-2">
-                {loginOrProfile()}
+                {loginAttempted && loginOrProfile()}
               </div>
             </div>
           </div>

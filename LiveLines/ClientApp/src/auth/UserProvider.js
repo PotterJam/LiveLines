@@ -3,7 +3,9 @@ import { UserContext } from "./UserContext";
 
 export const UserProvider = ({ children }) => {
     // User is the name of the "data" that gets stored in context
-    const [user, setUser] = useState({ username: '', authenticated: false });
+    const [user, setUser] = useState({ username: '', authenticated: null });
+
+    const loginAttempted = user.authenticated !== null;
   
     const login = name => {
       setUser(_ => ({
@@ -20,7 +22,7 @@ export const UserProvider = ({ children }) => {
     };
   
     return (
-      <UserContext.Provider value={{ user, login, logout }}>
+      <UserContext.Provider value={{ user, loginAttempted, login, logout }}>
         {children}
       </UserContext.Provider>
     );
