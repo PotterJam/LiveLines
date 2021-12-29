@@ -13,7 +13,7 @@ export function Home() {
     const date = parseISO(createdAt);
     return {
       id: id,
-      createdAt: format(date, 'do MMMM yyy'),
+      createdAt: format(date, 'do MMM yyy'),
       message: message
     };
   }
@@ -47,7 +47,7 @@ export function Home() {
   const linesHtml = (
     <div className="flex flex-col w-11/12 sm:w-4/5 md:w-8/12 lg:w-7/12 xl:w-6/12 2xl:w-2/5">
       <input
-        className="border-2 border-slate-500 rounded text-3xl p-3 m-2 mb-4"
+        className="whitespace-normal border-2 border-slate-500 rounded text-3xl p-3 m-2 mb-4"
         type="text"
         value={line}
         placeholder="What's today's line?"
@@ -62,7 +62,7 @@ export function Home() {
 
   const aboutElement = (
     <div className='flex flex-col w-4/5 sm:w-auto rounded bg-white border p-12'>
-      <h1 className='text-4xl sm:text-5xl font-medium text-slate-800 mb-12'>Welcome to LiveLines</h1>
+      <h1 className='font-serif-header font-bold text-4xl sm:text-5xl text-slate-800 mb-8'>Welcome to LiveLines</h1>
       <span className='pb-3 text-xl'>This is a work in progress.</span>
       <span className='pb-3 text-xl'>The aim is to write a line a day, about anything you want.</span>
       <span className='pb-3 text-xl'>Log in and try it out!</span>
