@@ -44,8 +44,8 @@ export function Home() {
     setLine("");
   }
   
-  const linesHtml = () => (
-    <div className="flex flex-col w-4/5 lg:w-3/5 xl:w-2/5">
+  const linesHtml = (
+    <div className="flex flex-col w-11/12 sm:w-4/5 md:w-8/12 lg:w-7/12 xl:w-6/12 2xl:w-2/5">
       <input
         className="border-2 border-slate-500 rounded text-3xl p-3 m-2 mb-4"
         type="text"
@@ -57,11 +57,22 @@ export function Home() {
       <LineTimeline
         lines={lines}
       />
-    </div>);
+    </div>
+  );
+
+  const aboutElement = (
+    <div className='flex flex-col w-4/5 sm:w-auto rounded bg-white border p-12'>
+      <h1 className='text-4xl sm:text-5xl font-medium text-slate-800 mb-12'>Welcome to LiveLines</h1>
+      <span className='pb-3 text-xl'>This is a work in progress.</span>
+      <span className='pb-3 text-xl'>The aim is to write a line a day, about anything you want.</span>
+      <span className='pb-3 text-xl'>Log in and try it out!</span>
+    </div>
+  );
 
   return (
     <div className="h-full flex mt-4 p-2 flex-col items-center">
-      {loginAttempted && linesHtml()}
+      {loginAttempted && user.authenticated && linesHtml}
+      {loginAttempted && !user.authenticated && aboutElement}
     </div>
   );
 }

@@ -18,13 +18,13 @@ export function NavMenu(props) {
         >
           <div className="inline-block">
             <FaGithub className="mb-1 inline-block"/>
-            <span>&nbsp; Login with Github</span>
+            <span>&nbsp; Login</span>
           </div>
         </a>
   }
 
   return (
-      <div className="sticky top-0 z-40 w-full flex bg-white border-b border-gray-200 fixed top-0 inset-x-0 z-100 h-16 items-center">
+      <div className="sticky top-0 z-40 w-full flex bg-white border-b border-gray-200 inset-x-0 z-100 h-16 items-center">
         <div className="w-full max-w-screen-xl relative mx-auto px-6">
           <div className="flex items-center place-content-between">
             <Link className="flex-none text-slate-800 text-3xl" tag={Link} to="/">LiveLines</Link>
