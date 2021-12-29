@@ -2,28 +2,21 @@ import React, { useContext, useEffect, useState } from 'react';
 import { getData, postData } from "../Api";
 import { UserContext } from '../auth/UserContext';
 import { LineTimeline } from "../components/LineTimeline";
-import { parseISO, format } from 'date-fns'
+import { parseISO } from 'date-fns'
 
 export function Home() {
   const [line, setLine] = useState("");
   const [lines, setLines] = useState([]);
   const { user, loginAttempted } = useContext(UserContext);
 
-  const FormatLineForTimeline = ({ id, message, createdAt }) => {
-    const date = parseISO(createdAt);
-    return {
-      id: id,
-      createdAt: format(date, 'do MMM yy'),
-      message: message
-    };
-  }
+  // TODO: Move this kind of logic to a service layer .js file
+  const parseLine = line => ({ ...line, createdAt: parseISO(line.createdAt) });
 
   useEffect(() => {
     const getLines = async () => {
       const resp = await getData("api/lines");
       const linesResp = await resp.json();
-      const timelineLines = linesResp.map(FormatLineForTimeline)
-      setLines(timelineLines);
+      setLines(linesResp.map(parseLine));
     }
 
     if (user.authenticated) {
@@ -38,9 +31,8 @@ export function Home() {
     
     const newLineResp = await postData("api/line", { Message: line });
     const newLine = await newLineResp.json();
-    const formattedLine = FormatLineForTimeline(newLine);
     
-    setLines([formattedLine, ...lines]);
+    setLines([parseLine(newLine), ...lines]);
     setLine("");
   }
   
