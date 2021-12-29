@@ -13,7 +13,7 @@ export function Home() {
     const date = parseISO(createdAt);
     return {
       id: id,
-      createdAt: format(date, 'do MMM yyy'),
+      createdAt: format(date, 'do MMM yy'),
       message: message
     };
   }
@@ -47,7 +47,7 @@ export function Home() {
   const linesHtml = (
     <div className="flex flex-col w-11/12 sm:w-4/5 md:w-8/12 lg:w-7/12 xl:w-6/12 2xl:w-2/5">
       <input
-        className="whitespace-normal border-2 border-slate-500 rounded text-3xl p-3 m-2 mb-4"
+        className="whitespace-normal border-2 border-slate-500 rounded text-3xl p-3 m-2 mb-6"
         type="text"
         value={line}
         placeholder="What's today's line?"
