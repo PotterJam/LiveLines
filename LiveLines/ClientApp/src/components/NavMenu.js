@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import  { UserContext } from '../auth/UserContext';
 import { FaGithub } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
-import {getData} from "../Api";
 
 export function NavMenu(props) {
   const { user, loginAttempted } = useContext(UserContext);
