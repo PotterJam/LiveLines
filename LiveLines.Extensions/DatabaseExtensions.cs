@@ -15,8 +15,20 @@ public static class DatabaseExtensions
         command.Parameters.Add(parameter);
     }
 
-    public static T Get<T>(this DbDataReader reader, string paramName)
+    public static T Get<T>(this DbDataReader reader, string paramName) where T : notnull
     {
         return (T) reader[paramName];
+    }
+    
+    public static T? GetNullable<T>(this DbDataReader reader, string paramName)
+    {
+        var value = reader[paramName];
+        
+        if (value is DBNull)
+        {
+            return default;
+        }
+        
+        return (T) value;
     }
 }
