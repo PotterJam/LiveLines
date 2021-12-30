@@ -2,6 +2,7 @@
 import {CSSTransition, TransitionGroup} from 'react-transition-group';
 import './timeline.css';
 import { format } from 'date-fns'
+import { BsSpotify } from 'react-icons/bs';
 
 export function LineTimeline({ lines }) {
 
@@ -32,7 +33,15 @@ export function LineTimeline({ lines }) {
     return timelineLines;
   };
   
-  const lineDataToHtml = ({ id, createdAt, message }) => {
+  const lineDataToHtml = ({ id, createdAt, message, spotifyId }) => {
+      const spotifyLink = spotifyId && <a
+        href={'https://open.spotify.com/track/' + spotifyId}
+        target="_blank"
+        className="inline-block align-middle pl-2 text-zinc-800"
+        >
+          <BsSpotify />
+      </a>
+
       const formattedCreationDate = format(createdAt, 'do');
       return (
         <CSSTransition key={id} timeout={200} classNames="timeline">
@@ -43,7 +52,7 @@ export function LineTimeline({ lines }) {
             </div>
             <div className="pr-1.5 mr-3 bg-blue-300"/>
             <div className="max-w-prose px-5 py-2 m-2 border border-slate-300 bg-white text-lg">
-              <span>{message}</span>
+              <span>{message}{spotifyLink}</span>
             </div>
         </div>
         </CSSTransition>

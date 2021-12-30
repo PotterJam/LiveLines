@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Extensions;
-using LiveLines.Api;
 using LiveLines.Api.Database;
 using LiveLines.Api.Lines;
 using LiveLines.Api.Users;
@@ -26,9 +25,10 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT id, body, created_at
-                    FROM lines
-                    WHERE user_id = @userid
+                    SELECT l.id, l.body, l.created_at, s.spotify_id
+                    FROM lines l
+                    LEFT JOIN songs s on s.id = l.song_id
+                    WHERE l.user_id = @userid
                     ORDER BY created_at DESC;";
 
             var reader = await cmd.ExecuteReaderAsync();
@@ -74,10 +74,11 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT id, body, created_at
-                    FROM lines
-                    WHERE id = @lineid
-                        AND user_id = @userid
+                    SELECT l.id, l.body, l.created_at, s.spotify_id
+                    FROM lines l
+                    LEFT JOIN songs s on s.id = l.song_id
+                    WHERE l.id = @lineid
+                        AND l.user_id = @userid
                     LIMIT 1;";
 
             var reader = await cmd.ExecuteReaderAsync();
@@ -94,7 +95,8 @@ public class LinesStore : ILinesStore
         var id = reader.Get<Guid>("id");
         var body = reader.Get<string>("body");
         var createdAt = reader.Get<DateTime>("created_at");
+        var spotifyId = reader.GetNullable<string?>("spotify_id"); 
 
-        return new Line(id, body, createdAt);
+        return new Line(id, body, spotifyId, createdAt);
     }
 }

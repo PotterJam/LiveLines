@@ -2,4 +2,4 @@
 
 namespace LiveLines.Api.Lines;
 
-public record Line(Guid Id, string Message, DateTime CreatedAt);
+public record Line(Guid Id, string Message, string? SpotifyId, DateTime CreatedAt);
