@@ -1,4 +1,5 @@
-﻿using Extensions;
+﻿using System.Threading.Tasks;
+using Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,13 @@ public class AuthenticationController : ControllerBase
         return Challenge(new AuthenticationProperties { RedirectUri = returnUrl });
     }
     
+    [HttpGet, Route("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync();
+        return Redirect(Url.Content("~/"));
+    }
+
     public record AuthenticatedResponse(string Username, bool Authenticated);
     
     [AllowAnonymous]

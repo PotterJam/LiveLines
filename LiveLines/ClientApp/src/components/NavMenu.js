@@ -2,15 +2,20 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import  { UserContext } from '../auth/UserContext';
 import { FaGithub } from 'react-icons/fa';
+import { FiLogOut } from 'react-icons/fi';
 
 export function NavMenu(props) {
   const { user, loginAttempted } = useContext(UserContext);
 
   const loginWithGithub = `api/login?returnUrl=${window.location.origin}/`;
+  const logout = 'api/logout';
 
   const loginOrProfile = () => {
     return user.authenticated
-      ? <span className="font-medium mr-3 text-lg text-slate-800">{user.username}</span>
+      ? <div className="inline-block">
+          <span className="font-medium mr-3 text-lg text-slate-800">{user.username}</span>
+          <a href={logout}><FiLogOut className="mb-1 inline-block"/></a>
+        </div>
       : <a
           href={loginWithGithub}
           className="bg-transparent hover:bg-blue-500 text-slate-700 hover:text-white py-2 px-4 border border-slate-500 hover:border-transparent rounded"

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Extensions;
+using LiveLines.Api;
 using LiveLines.Api.Database;
 using LiveLines.Api.Lines;
 using LiveLines.Api.Users;
@@ -43,16 +44,17 @@ public class LinesStore : ILinesStore
         });
     }
 
-    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body)
+    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
             cmd.AddParam("@userid", loggedInUser.InternalId);
             cmd.AddParam("@body", body);
+            cmd.AddParam("@songId", songId);
 
             cmd.CommandText = @"
-                    INSERT INTO lines (user_id, body)
-                    VALUES (@userid, @body)
+                    INSERT INTO lines (user_id, body, song_id)
+                    VALUES (@userid, @body, @songId)
                     RETURNING id;";
 
             var guid = (Guid?) await cmd.ExecuteScalarAsync();

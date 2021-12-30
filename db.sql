@@ -1,3 +1,6 @@
+-- DB MIGRATIONS FILE
+-- DON'T CHANGE, ONLY APPEND
+
 CREATE EXTENSION "uuid-ossp";
 
 CREATE ROLE dev;
@@ -25,3 +28,21 @@ CREATE TABLE lines
 );
 
 GRANT UPDATE, INSERT, SELECT ON TABLE lines TO dev;
+
+-- v1: add song table and song id to lines
+BEGIN;
+    CREATE TABLE songs
+    (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        spotify_id TEXT UNIQUE NOT NULL
+    );
+
+    CREATE INDEX songs_spotify_id_idx ON songs (spotify_id);
+
+    GRANT UPDATE, INSERT, SELECT ON TABLE songs TO dev;
+
+    ALTER TABLE lines
+    ADD COLUMN song_id UUID REFERENCES songs (id) NULL;
+COMMIT;
+-- end
+

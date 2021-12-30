@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\LiveLines.Api\LiveLines.Api.csproj" />
+      <ProjectReference Include="..\LiveLines.Extensions\LiveLines.Extensions.csproj" />
+    </ItemGroup>
+
+</Project>

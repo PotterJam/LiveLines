@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System;
+using System.Data.Common;
 
 namespace Extensions;
 
@@ -8,7 +9,8 @@ public static class DatabaseExtensions
     {
         var parameter = command.CreateParameter();
         parameter.ParameterName = paramName;
-        parameter.Value = value;
+
+        parameter.Value = (object?) value ?? DBNull.Value;
 
         command.Parameters.Add(parameter);
     }

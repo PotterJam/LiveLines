@@ -2,7 +2,7 @@
 
 namespace LiveLines.Lines;
 
-public class LinesStoreException : Exception
+internal class LinesStoreException : Exception
 {
     public LinesStoreException(string msg) : base(msg)
     {
