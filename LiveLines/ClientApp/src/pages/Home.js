@@ -59,7 +59,7 @@ export function Home() {
     <div className="flex flex-col w-11/12 sm:w-4/5 md:w-8/12 lg:w-7/12 xl:w-6/12 2xl:w-2/5">
       <div className="flex px-2 pt-2 border-slate-100 rounded">
         <input
-          className="w-full whitespace-normal bg-white border-2 border-slate-300 placeholder-gray-500 rounded text-3xl p-3 m-1"
+          className="w-full whitespace-normal bg-white border-2 border-slate-300 placeholder-gray-500 rounded text-2xl sm:text-3xl p-3 m-1"
           type="text"
           value={line}
           placeholder="What's today's line?"
