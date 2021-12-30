@@ -34,7 +34,11 @@ export function Home() {
       return;
     }
     
-    const newLineResp = await postData("api/line", { Message: line });
+    const newLineResp = await postData("api/line", {
+      Message: line,
+      ...(songEnabled && songInput !== '' && { SongId: songInput })
+    });
+    
     const newLine = await newLineResp.json();
     
     setLines([parseLine(newLine), ...lines]);

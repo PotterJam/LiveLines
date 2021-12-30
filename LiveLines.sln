@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveLines.Extensions", "Liv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveLines.Security", "LiveLines.Security\LiveLines.Security.csproj", "{0FFAE1A4-178C-4BD3-BFFD-67F70575A40C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveLines.Songs", "LiveLines.Songs\LiveLines.Songs.csproj", "{EF9F599E-BEEC-4AF9-9A2B-3081992F0D7E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,9 @@ Global
 		{0FFAE1A4-178C-4BD3-BFFD-67F70575A40C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FFAE1A4-178C-4BD3-BFFD-67F70575A40C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FFAE1A4-178C-4BD3-BFFD-67F70575A40C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF9F599E-BEEC-4AF9-9A2B-3081992F0D7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF9F599E-BEEC-4AF9-9A2B-3081992F0D7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF9F599E-BEEC-4AF9-9A2B-3081992F0D7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF9F599E-BEEC-4AF9-9A2B-3081992F0D7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

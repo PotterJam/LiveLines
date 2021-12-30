@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Extensions;
+using LiveLines.Api;
 using LiveLines.Api.Lines;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,13 +31,15 @@ public class LinesController : ControllerBase
         return lines.Select(line => new LineResponse(line.Id, line.Message, line.CreatedAt));
     }
 
-    public record LineRequest(string Message);
+    public record LineRequest(string Message, string? SongId);
 
     [HttpPost, Route("line")]
     public async Task<LineResponse> CreateLine([FromBody] LineRequest lineRequest)
     {
         var user = User.GetLoggedInUser();
-        var line = await _linesService.CreateLine(user, lineRequest.Message);
+
+        var lineToCreate = new LineToCreate(lineRequest.Message, lineRequest.SongId);
+        var line = await _linesService.CreateLine(user, lineToCreate);
         return new LineResponse(line.Id, line.Message, line.CreatedAt);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace LiveLines.Users;
 
-public class UserStoreException : Exception
+internal class UserStoreException : Exception
 {
     public UserStoreException(string msg) : base(msg)
     {
