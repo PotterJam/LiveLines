@@ -57,7 +57,7 @@ export function Home() {
   
   const linesHtml = (
     <div className="flex flex-col w-11/12 sm:w-4/5 md:w-8/12 lg:w-7/12 xl:w-6/12 2xl:w-2/5">
-      <div className="flex px-2 pt-2 border-slate-100 rounded">
+      <div className="flex px-2 pb-1 pt-0 sm:pt-2 sm:pb-4 border-slate-100 rounded">
         <input
           className="w-full whitespace-normal bg-white border-2 border-slate-300 placeholder-gray-500 rounded text-2xl sm:text-3xl p-3 m-1"
           type="text"
@@ -95,7 +95,7 @@ export function Home() {
   );
 
   return (
-    <div className="h-full flex mt-4 p-2 flex-col items-center">
+    <div className="h-full flex mt-4 p-0.5 sm:p-2 flex-col items-center">
       {loginAttempted && user.authenticated && linesHtml}
       {loginAttempted && !user.authenticated && aboutElement}
     </div>
