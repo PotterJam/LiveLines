@@ -57,9 +57,9 @@ export function Home() {
   
   const linesHtml = (
     <div className="flex flex-col w-11/12 sm:w-4/5 md:w-8/12 lg:w-7/12 xl:w-6/12 2xl:w-2/5">
-      <div className="flex px-2 pb-3 pt-0 sm:pt-2 border-gray-100 rounded">
+      <div className="flex px-2 pb-1 pt-0 sm:pt-2 sm:pb-4 border-slate-100 rounded">
         <input
-          className="w-full whitespace-normal bg-white border border-gray-300 placeholder-gray-500 rounded text-2xl sm:text-3xl p-3 ml-1"
+          className="w-full whitespace-normal bg-white border-2 border-slate-300 placeholder-gray-500 rounded text-2xl sm:text-3xl p-3 m-1"
           type="text"
           value={line}
           placeholder="What's today's line?"
@@ -67,19 +67,18 @@ export function Home() {
           onKeyDown={submitLine}
         />
         <div className="pl-1 pr-0.5 flex items-center">
-          <div onClick={toggleSongEnable} className="w-7 h-full cursor-pointer flex items-center rounded">
+          <div onClick={toggleSongEnable} className="w-7 h-7 bg-white border-2 border-slate-300 flex items-center rounded">
             <BiMusic className="m-auto text-slate-700 text-center block"/>
           </div>
         </div>
       </div>
       {songEnabled && <input
-        className="w-52 whitespace-normal bg-white border border-gray-200 placeholder-gray-400 placeholder-opacity-90 rounded text-sm ml-3 px-2 py-1"
+        className="w-52 whitespace-normal bg-white border-2 border-slate-200 placeholder-gray-300 rounded text-sm ml-3 p-1 mt-1"
         type="text"
         value={songInput}
         placeholder="Enter spotify song identifier"
         onChange={e => { setSongInput(e.target.value); }}
       />}
-      <div className="my-1" />
       <LineTimeline
         lines={lines}
       />
