@@ -46,3 +46,15 @@ BEGIN;
 COMMIT;
 -- end
 
+-- v2: add date_for column to lines
+BEGIN;
+    ALTER TABLE lines
+    ADD COLUMN date_for DATE NULL;
+
+    UPDATE lines
+    SET date_for = DATE(created_at);
+
+    ALTER TABLE lines
+    ALTER COLUMN date_for SET NOT NULL;
+COMMIT;
+-- end
