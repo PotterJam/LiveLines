@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Extensions;
 using LiveLines.Api;
 using LiveLines.Api.Lines;
+using LiveLines.Api.Streaks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,10 +16,12 @@ namespace LiveLines.Lines;
 public class LinesController : ControllerBase
 {
     private readonly ILinesService _linesService;
+    private readonly IStreakService _streakService;
 
-    public LinesController(ILinesService linesService)
+    public LinesController(ILinesService linesService, IStreakService streakService)
     {
         _linesService = linesService;
+        _streakService = streakService;
     }
 
     public record LineResponse(Guid Id, string Message, string? SpotifyId, DateTime DateFor);
@@ -43,6 +46,9 @@ public class LinesController : ControllerBase
 
         var lineToCreate = new LineToCreate(lineRequest.Message, lineRequest.SongId, lineRequest.ForYesterday);
         var line = await _linesService.CreateLine(user, lineToCreate);
+
+        await _streakService.IncrementStreak(user);
+
         return new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor);
     }
 

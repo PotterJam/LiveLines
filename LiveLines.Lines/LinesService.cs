@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using LiveLines.Api;
 using LiveLines.Api.Lines;
 using LiveLines.Api.Songs;
-using LiveLines.Api.Streaks;
 using LiveLines.Api.Users;
 
 namespace LiveLines.Lines;
@@ -16,13 +15,11 @@ public class LinesService : ILinesService
 {
     private readonly ILinesStore _linesStore;
     private readonly ISongService _songService;
-    private readonly IStreakService _streakService;
 
-    public LinesService(ILinesStore linesStore, ISongService songService, IStreakService streakService)
+    public LinesService(ILinesStore linesStore, ISongService songService)
     {
         _linesStore = linesStore;
         _songService = songService;
-        _streakService = streakService;
     }
 
     public async Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser)
@@ -38,11 +35,8 @@ public class LinesService : ILinesService
         Guid? songId = lineToCreate.SpotifySongId != null
             ? await _songService.AddSong(lineToCreate.SpotifySongId)
             : null;
-        
-        var line = await _linesStore.CreateLine(user, lineToCreate.Body, songId, lineToCreate.ForYesterday);
-        await _streakService.IncrementStreak(user);
 
-        return line;
+        return await _linesStore.CreateLine(user, lineToCreate.Body, songId, lineToCreate.ForYesterday);
     }
 
     public async Task<LineOperations> GetLineOperations(LoggedInUser loggedInUser)
