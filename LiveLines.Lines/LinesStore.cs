@@ -62,11 +62,11 @@ public class LinesStore : ILinesStore
             if (guid == null)
                 throw new LinesStoreException($"Tried to create line for user {loggedInUser.InternalId}, id not returned");
 
-            return await GetLine(loggedInUser, guid.Value);
+            return await GetLineForDate(loggedInUser, guid.Value);
         });
     }
 
-    private async Task<Line> GetLine(LoggedInUser loggedInUser, Guid lineId)
+    private async Task<Line> GetLineForDate(LoggedInUser loggedInUser, Guid lineId)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
@@ -90,7 +90,7 @@ public class LinesStore : ILinesStore
         });
     }
 
-    public async Task<Line> GetLine(LoggedInUser loggedInUser, DateOnly date)
+    public async Task<Line> GetLineForDate(LoggedInUser loggedInUser, DateOnly date)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
