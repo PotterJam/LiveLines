@@ -8,5 +8,5 @@ public interface IStreakService
 {
     Task<int> UpdateStreak(LoggedInUser user, DateTime newLineCreation);
 
-    Task<Streak> GetStreak(LoggedInUser user);
+    Task<int> GetStreak(LoggedInUser user);
 }
