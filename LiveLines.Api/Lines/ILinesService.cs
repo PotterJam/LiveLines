@@ -8,4 +8,5 @@ public interface ILinesService
 {
     Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser);
     Task<Line> CreateLine(LoggedInUser loggedInUser, LineToCreate lineToCreate);
+    Task<IEnumerable<LineOperation>> GetLineOperations(LoggedInUser loggedInUser);
 }

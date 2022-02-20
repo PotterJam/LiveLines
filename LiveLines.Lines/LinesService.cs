@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using LiveLines.Api;
 using LiveLines.Api.Lines;
@@ -34,5 +37,36 @@ public class LinesService : ILinesService
             : null;
 
         return await _linesStore.CreateLine(loggedInUser, lineToCreate.Body, songId);
+    }
+
+    public async Task<IEnumerable<LineOperation>> GetLineOperations(LoggedInUser loggedInUser)
+    {
+        var lineOperations = new Collection<LineOperation>();
+
+        DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+
+        try
+        {
+            await _linesStore.GetLineForDate(loggedInUser, today);
+            lineOperations.Add(LineOperation.PostToday);
+        }
+        catch (LinesStoreException)
+        {
+            // no line today
+        }
+
+        DateOnly yesterday = today.AddDays(-1);
+
+        try
+        {
+            await _linesStore.GetLineForDate(loggedInUser, yesterday);
+            lineOperations.Add(LineOperation.PostYesterday);
+        }
+        catch (LinesStoreException)
+        {
+            // no line yesterday
+        }
+
+        return lineOperations;
     }
 }
