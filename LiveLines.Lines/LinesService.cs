@@ -54,7 +54,7 @@ public class LinesService : ILinesService
         {
             canPostToday = true;
 
-            if (DateTime.Now.Hour < 19)
+            if (DateTime.Now.Hour < 12)
             {
                 try
                 {
