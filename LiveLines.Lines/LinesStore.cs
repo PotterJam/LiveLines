@@ -44,17 +44,20 @@ public class LinesStore : ILinesStore
         });
     }
 
-    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId)
+    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId, bool forYesterday)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+            
             cmd.AddParam("@userid", loggedInUser.InternalId);
             cmd.AddParam("@body", body);
             cmd.AddParam("@songId", songId);
+            cmd.AddParam("@dateFor", forYesterday ? today.AddDays(-1) : today);
 
             cmd.CommandText = @"
-                    INSERT INTO lines (user_id, body, song_id)
-                    VALUES (@userid, @body, @songId)
+                    INSERT INTO lines (user_id, body, song_id, date_for)
+                    VALUES (@userid, @body, @songId, @dateFor)
                     RETURNING id;";
 
             var guid = (Guid?) await cmd.ExecuteScalarAsync();

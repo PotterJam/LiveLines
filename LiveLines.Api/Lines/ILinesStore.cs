@@ -8,6 +8,6 @@ namespace LiveLines.Api.Lines;
 public interface ILinesStore
 {
     Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser);
-    Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId);
+    Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId, bool forYesterday);
     Task<Line> GetLineForDate(LoggedInUser loggedInUser, DateOnly date);
 }

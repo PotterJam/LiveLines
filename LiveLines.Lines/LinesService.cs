@@ -36,7 +36,7 @@ public class LinesService : ILinesService
             ? await _songService.AddSong(lineToCreate.SpotifySongId)
             : null;
 
-        return await _linesStore.CreateLine(loggedInUser, lineToCreate.Body, songId);
+        return await _linesStore.CreateLine(loggedInUser, lineToCreate.Body, songId, lineToCreate.ForYesterday);
     }
 
     public async Task<IEnumerable<LineOperation>> GetLineOperations(LoggedInUser loggedInUser)
