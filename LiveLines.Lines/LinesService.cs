@@ -43,7 +43,7 @@ public class LinesService : ILinesService
     {
         var lineOperations = new Collection<LineOperation>();
 
-        DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+        DateTime today = DateTime.Today;
 
         try
         {

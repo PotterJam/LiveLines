@@ -48,7 +48,7 @@ public class LinesStore : ILinesStore
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
-            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+            DateTime today = DateTime.Today;
             
             cmd.AddParam("@userid", loggedInUser.InternalId);
             cmd.AddParam("@body", body);
@@ -93,11 +93,11 @@ public class LinesStore : ILinesStore
         });
     }
 
-    public async Task<Line> GetLineForDate(LoggedInUser loggedInUser, DateOnly date)
+    public async Task<Line> GetLineForDate(LoggedInUser loggedInUser, DateTime date)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
-            cmd.AddParam("@date", date);
+            cmd.AddParam("@date", date.Date);
             cmd.AddParam("@userId", loggedInUser.InternalId);
 
             cmd.CommandText = @"
@@ -122,7 +122,7 @@ public class LinesStore : ILinesStore
         var id = reader.Get<Guid>("id");
         var body = reader.Get<string>("body");
         var createdAt = reader.Get<DateTime>("created_at");
-        var dateFor = reader.Get<DateOnly>("date_for");
+        var dateFor = reader.Get<DateTime>("date_for");
         var spotifyId = reader.GetNullable<string?>("spotify_id"); 
 
         return new Line(id, body, spotifyId, createdAt, dateFor);

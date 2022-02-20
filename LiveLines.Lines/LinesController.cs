@@ -21,7 +21,7 @@ public class LinesController : ControllerBase
         _linesService = linesService;
     }
 
-    public record LineResponse(Guid Id, string Message, string? SpotifyId, DateTime CreatedAt, DateOnly DateFor);
+    public record LineResponse(Guid Id, string Message, string? SpotifyId, DateTime CreatedAt, DateTime DateFor);
     
     [HttpGet, Route("lines")]
     public async Task<IEnumerable<LineResponse>> FetchLines()
