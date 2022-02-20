@@ -20,9 +20,10 @@ public class StreakService : IStreakService
 
     private string GetStreakCacheKey(LoggedInUser user) => StreakCachePrefix + user;
 
-    public Task<int> UpdateStreak(LoggedInUser user, DateTime newLineCreation)
+    public async Task<int> IncrementStreak(LoggedInUser user)
     {
-        throw new NotImplementedException();
+        var newStreak = await GetStreak(user) + 1;
+        return _expiringStreakCache.Set(GetStreakCacheKey(user), newStreak);
     }
 
     public async Task<int> GetStreak(LoggedInUser user)
