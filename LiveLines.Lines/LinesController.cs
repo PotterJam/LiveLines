@@ -43,13 +43,13 @@ public class LinesController : ControllerBase
         return new LineResponse(line.Id, line.Message, line.SpotifyId, line.CreatedAt, line.DateFor);
     }
 
-    public record LineOperationResponse(LineOperation Operation);
+    public record LineOperationsResponse(bool CanPostToday, bool CanPostYesterday);
 
     [HttpGet, Route("lineOperations")]
-    public async Task<IEnumerable<LineOperationResponse>> FetchLineOperations()
+    public async Task<LineOperationsResponse> FetchLineOperations()
     {
         var user = User.GetLoggedInUser();
         var operations = await _linesService.GetLineOperations(user);
-        return operations.Select(operation => new LineOperationResponse(operation));
+        return new LineOperationsResponse(operations.CanPostToday, operations.CanPostYesterday);
     }
 }

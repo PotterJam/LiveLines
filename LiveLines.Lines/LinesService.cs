@@ -39,33 +39,34 @@ public class LinesService : ILinesService
         return await _linesStore.CreateLine(loggedInUser, lineToCreate.Body, songId, lineToCreate.ForYesterday);
     }
 
-    public async Task<IEnumerable<LineOperation>> GetLineOperations(LoggedInUser loggedInUser)
+    public async Task<LineOperations> GetLineOperations(LoggedInUser loggedInUser)
     {
-        var lineOperations = new Collection<LineOperation>();
+        bool canPostToday = false;
+        bool canPostYesterday = false;
 
         DateTime today = DateTime.Today;
 
         try
         {
             await _linesStore.GetLineForDate(loggedInUser, today);
-            lineOperations.Add(LineOperation.PostToday);
         }
         catch (LinesStoreException)
         {
-            if (DateTime.Now.Hour < 12)
+            canPostToday = true;
+
+            if (DateTime.Now.Hour < 19)
             {
                 try
                 {
                     await _linesStore.GetLineForDate(loggedInUser, today.AddDays(-1));
-                    lineOperations.Add(LineOperation.PostYesterday);
                 }
                 catch (LinesStoreException)
                 {
-                    // no line yesterday
+                    canPostYesterday = true;
                 }
             }
         }
 
-        return lineOperations;
+        return new LineOperations(canPostToday, canPostYesterday);
     }
 }
