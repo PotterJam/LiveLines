@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using LiveLines.Api;
 using LiveLines.Api.Lines;
 using LiveLines.Api.Songs;
+using LiveLines.Api.Streaks;
 using LiveLines.Api.Users;
 
 namespace LiveLines.Lines;
@@ -15,11 +16,13 @@ public class LinesService : ILinesService
 {
     private readonly ILinesStore _linesStore;
     private readonly ISongService _songService;
+    private readonly IStreakService _streakService;
 
-    public LinesService(ILinesStore linesStore, ISongService songService)
+    public LinesService(ILinesStore linesStore, ISongService songService, IStreakService streakService)
     {
         _linesStore = linesStore;
         _songService = songService;
+        _streakService = streakService;
     }
 
     public async Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser)
@@ -27,7 +30,7 @@ public class LinesService : ILinesService
         return await _linesStore.GetLines(loggedInUser);
     }
 
-    public async Task<Line> CreateLine(LoggedInUser loggedInUser, LineToCreate lineToCreate)
+    public async Task<Line> CreateLine(LoggedInUser user, LineToCreate lineToCreate)
     {
         // TODO: will need to validate the song id input (don't send an invalid input to the below)
         // perhaps in the song table have a flag for songs that didn't get populated properly so we can display it in the frontend
@@ -35,8 +38,11 @@ public class LinesService : ILinesService
         Guid? songId = lineToCreate.SpotifySongId != null
             ? await _songService.AddSong(lineToCreate.SpotifySongId)
             : null;
+        
+        var line = await _linesStore.CreateLine(user, lineToCreate.Body, songId, lineToCreate.ForYesterday);
+        await _streakService.IncrementStreak(user);
 
-        return await _linesStore.CreateLine(loggedInUser, lineToCreate.Body, songId, lineToCreate.ForYesterday);
+        return line;
     }
 
     public async Task<LineOperations> GetLineOperations(LoggedInUser loggedInUser)
