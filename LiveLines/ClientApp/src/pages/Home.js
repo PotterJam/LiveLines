@@ -8,27 +8,57 @@ import { BiMusic } from 'react-icons/bi';
 export function Home() {
   const [line, setLine] = useState("");
   const [lines, setLines] = useState([]);
+  const [linePlaceholder, setLinePlaceholder] = useState("");
   
   const [songEnabled, setSongEnabled] = useState(false);
   const [songInput, setSongInput] = useState('');
-  
+
+  const [canPostToday, setCanPostToday] = useState(null);
+  const [canPostYesterday, setCanPostYesterday] = useState(null);
+  const [postYesterdayInput, setPostYesterdayInput] = useState(false);
+
   const { user, loginAttempted } = useContext(UserContext);
 
   // TODO: Move this kind of logic to a service layer .js file
-  const parseLine = line => ({ ...line, createdAt: parseISO(line.createdAt) });
+  const parseLine = line => ({ ...line, dateFor: parseISO(line.dateFor) });
 
-  useEffect(() => {
-    const getLines = async () => {
-      const resp = await getData("api/lines");
-      const linesResp = await resp.json();
-      setLines(linesResp.map(parseLine));
+  const getLines = async () => {
+    const resp = await getData("api/lines");
+    const linesResp = await resp.json();
+    setLines(linesResp.map(parseLine));
+  }
+
+  const getLineOperations = async () => {
+    const resp = await getData("api/lineOperations");
+    const operationsResp = await resp.json();
+    setCanPostToday(operationsResp.canPostToday);
+    setCanPostYesterday(operationsResp.canPostYesterday);
+    if (!operationsResp.canPostYesterday) {
+      setPostYesterdayInput(false);
     }
-
+  }
+  
+  useEffect(() => {
     if (user.authenticated) {
+        getLineOperations();
         getLines();
     }
   }, [user.authenticated]);
 
+  useEffect(() => {
+    if (canPostToday === null) {
+      setLinePlaceholder("");
+    } else if (postYesterdayInput) {
+      setLinePlaceholder("What's yesterday's line?");
+    } else {
+      if (canPostToday) {
+        setLinePlaceholder("What's today's line?");
+      } else {
+        setLinePlaceholder("You've already posted today!");
+      }
+    }
+  }, [canPostToday, postYesterdayInput]);
+  
   const submitLine = async e => {
     if (e.key !== 'Enter' || line === '') {
       return;
@@ -36,16 +66,20 @@ export function Home() {
     
     const newLineResp = await postData("api/line", {
       Message: line,
-      ...(songEnabled && songInput !== '' && { SongId: songInput })
+      ...(songEnabled && songInput !== '' && { SongId: songInput }),
+      ForYesterday: postYesterdayInput
     });
     
     const newLine = await newLineResp.json();
+    const parsedNewLine = parseLine(newLine);
     
-    setLines([parseLine(newLine), ...lines]);
+    setLines([parsedNewLine, ...lines]);
     setLine("");
 
     setSongEnabled(false);
     setSongInput('');
+    
+    await getLineOperations();
   }
 
   const toggleSongEnable = () => {
@@ -62,7 +96,8 @@ export function Home() {
           className="w-full whitespace-normal bg-white border border-gray-300 placeholder-gray-500 rounded text-2xl sm:text-3xl p-3 ml-1"
           type="text"
           value={line}
-          placeholder="What's today's line?"
+          placeholder={linePlaceholder}
+          disabled={!canPostToday}
           onChange={e => { setLine(e.target.value); }}
           onKeyDown={submitLine}
         />
@@ -72,13 +107,25 @@ export function Home() {
           </div>
         </div>
       </div>
-      {songEnabled && <input
-        className="w-52 whitespace-normal bg-white border border-gray-200 placeholder-gray-400 placeholder-opacity-90 rounded text-sm ml-3 px-2 py-1"
-        type="text"
-        value={songInput}
-        placeholder="Enter spotify song identifier"
-        onChange={e => { setSongInput(e.target.value); }}
-      />}
+      <div className="flex">
+        {songEnabled && <input
+          className="w-52 whitespace-normal bg-white border border-gray-200 placeholder-gray-400 placeholder-opacity-90 rounded text-sm ml-3 px-2 py-1"
+          type="text"
+          value={songInput}
+          placeholder="Enter spotify song identifier"
+          onChange={e => { setSongInput(e.target.value); }}
+        />}
+        <div className="w-max ml-auto mr-11" title="You can post yesterday's line up until midday">
+          <label className="pr-2">Post as yesterday's line:</label>
+          <input
+              type="checkbox"
+              checked={postYesterdayInput}
+              disabled={!canPostYesterday}
+              onChange={e => { setPostYesterdayInput(e.target.checked); }}
+          />
+        </div>
+      </div>
+      
       <div className="my-1" />
       <LineTimeline
         lines={lines}
