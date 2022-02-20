@@ -53,7 +53,7 @@ BEGIN;
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id UUID REFERENCES users (id) NOT NULL,
         streak INTEGER NOT NULL,
-        streak_updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+        last_updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
     );
 
     CREATE INDEX streaks_user_id_idx ON streaks (user_id);
