@@ -25,7 +25,6 @@ public static class ServiceModuleExtension
             .AddSingleton<ILinesStore, LinesStore>()
             .AddSingleton<ISongStore, SongStore>()
             .AddSingleton<ISongService, SongService>()
-            .AddSingleton<IStreakStore, StreakStore>()
             .AddSingleton<IStreakService, StreakService>();
     }
 }

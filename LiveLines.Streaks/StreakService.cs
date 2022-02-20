@@ -1,24 +1,25 @@
 ﻿using LiveLines.Api.Streaks;
 using LiveLines.Api.Users;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace LiveLines.Streaks;
 
 public class StreakService : IStreakService
 {
-    private readonly IStreakStore _streakStore;
+    private readonly IMemoryCache _expiringStreakCache;
 
-    public StreakService(IStreakStore streakStore)
+    public StreakService(IMemoryCache expiringStreakCache)
     {
-        _streakStore = streakStore;
+        _expiringStreakCache = expiringStreakCache;
     }
 
-    public async Task<int> UpdateStreak(LoggedInUser user, DateTime newLineCreation)
+    public Task<int> UpdateStreak(LoggedInUser user, DateTime newLineCreation)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Streak> GetStreak(LoggedInUser user)
+    public Task<Streak> GetStreak(LoggedInUser user)
     {
-        return await _streakStore.GetStreak(user);
+        throw new NotImplementedException();
     }
 }

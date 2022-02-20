@@ -45,19 +45,3 @@ BEGIN;
     ADD COLUMN song_id UUID REFERENCES songs (id) NULL;
 COMMIT;
 -- end
-
--- v2: create streaks table
-BEGIN;
-    CREATE TABLE streaks
-    (
-        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        user_id UUID REFERENCES users (id) NOT NULL,
-        streak INTEGER NOT NULL,
-        last_updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
-    );
-
-    CREATE INDEX streaks_user_id_idx ON streaks (user_id);
-
-    GRANT UPDATE, INSERT, SELECT ON TABLE streaks TO dev;
-COMMIT;
--- end
