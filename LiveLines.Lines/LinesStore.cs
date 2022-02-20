@@ -90,6 +90,30 @@ public class LinesStore : ILinesStore
         });
     }
 
+    public async Task<Line> GetLine(LoggedInUser loggedInUser, DateOnly date)
+    {
+        return await _dbExecutor.ExecuteCommand(async cmd =>
+        {
+            cmd.AddParam("@date", date);
+            cmd.AddParam("@userId", loggedInUser.InternalId);
+
+            cmd.CommandText = @"
+                    SELECT l.id, l.body, l.created_at, l.date_for, s.spotify_id
+                    FROM lines l
+                    LEFT JOIN songs s on s.id = l.song_id
+                    WHERE l.user_id = @userId
+                        AND l.date_for = @date
+                    LIMIT 1;";
+
+            var reader = await cmd.ExecuteReaderAsync();
+
+            if (!await reader.ReadAsync())
+                throw new LinesStoreException($"Couldn't get line on {date} for user {loggedInUser.InternalId}");
+
+            return ReadLine(reader);
+        });
+    }
+
     private Line ReadLine(DbDataReader reader)
     {
         var id = reader.Get<Guid>("id");
