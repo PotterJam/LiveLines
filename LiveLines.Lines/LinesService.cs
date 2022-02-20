@@ -52,19 +52,18 @@ public class LinesService : ILinesService
         }
         catch (LinesStoreException)
         {
-            // no line today
-        }
-
-        DateOnly yesterday = today.AddDays(-1);
-
-        try
-        {
-            await _linesStore.GetLineForDate(loggedInUser, yesterday);
-            lineOperations.Add(LineOperation.PostYesterday);
-        }
-        catch (LinesStoreException)
-        {
-            // no line yesterday
+            if (DateTime.Now.Hour < 12)
+            {
+                try
+                {
+                    await _linesStore.GetLineForDate(loggedInUser, today.AddDays(-1));
+                    lineOperations.Add(LineOperation.PostYesterday);
+                }
+                catch (LinesStoreException)
+                {
+                    // no line yesterday
+                }
+            }
         }
 
         return lineOperations;
