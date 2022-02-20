@@ -44,6 +44,34 @@ public class LinesStore : ILinesStore
         });
     }
 
+    public async Task<IEnumerable<Line>> GetLinesAfter(LoggedInUser loggedInUser, DateOnly afterDate)
+    {
+        return await _dbExecutor.ExecuteCommand(async cmd =>
+        {
+            cmd.AddParam("@userId", loggedInUser.InternalId);
+            cmd.AddParam("@afterDate", afterDate);
+
+            cmd.CommandText = @"
+                    SELECT l.id, l.body, l.created_at, l.date_for, s.spotify_id
+                    FROM lines l
+                    LEFT JOIN songs s on s.id = l.song_id
+                    WHERE l.user_id = @userid
+                    AND l.date_for >= @afterDate
+                    ORDER BY created_at DESC;";
+
+            var reader = await cmd.ExecuteReaderAsync();
+            var lines = new List<Line>();
+                
+            while (await reader.ReadAsync())
+            {
+                var line = ReadLine(reader);
+                lines.Add(line);
+            }
+
+            return lines;
+        });
+    }
+
     public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
