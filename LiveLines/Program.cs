@@ -29,6 +29,7 @@ builder.Services.AddAuthentication(options =>
     .AddOAuth("GitHub", oAuthConfigurer.GitHub);
 
 builder.Services.AddControllers();
+builder.Services.AddMemoryCache();
 
 // In production, the React files will be served from this directory
 builder.Services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
