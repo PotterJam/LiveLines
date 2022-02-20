@@ -46,15 +46,18 @@ BEGIN;
 COMMIT;
 -- end
 
--- v2: add date_for column to lines
+-- v2: create streaks table
 BEGIN;
-    ALTER TABLE lines
-    ADD COLUMN date_for DATE NULL;
+    CREATE TABLE streaks
+    (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        user_id UUID REFERENCES users (id) NOT NULL,
+        streak INTEGER NOT NULL,
+        streak_updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+    );
 
-    UPDATE lines
-    SET date_for = DATE(created_at);
+    CREATE INDEX streaks_user_id_idx ON streaks (user_id);
 
-    ALTER TABLE lines
-    ALTER COLUMN date_for SET NOT NULL;
+    GRANT UPDATE, INSERT, SELECT ON TABLE streaks TO dev;
 COMMIT;
 -- end
