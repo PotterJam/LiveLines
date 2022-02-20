@@ -42,4 +42,14 @@ public class LinesController : ControllerBase
         var line = await _linesService.CreateLine(user, lineToCreate);
         return new LineResponse(line.Id, line.Message, line.SpotifyId, line.CreatedAt, line.DateFor);
     }
+
+    public record LineOperationResponse(LineOperation Operation);
+
+    [HttpGet, Route("lineOperations")]
+    public async Task<IEnumerable<LineOperationResponse>> FetchLineOperations()
+    {
+        var user = User.GetLoggedInUser();
+        var operations = await _linesService.GetLineOperations(user);
+        return operations.Select(operation => new LineOperationResponse(operation));
+    }
 }
