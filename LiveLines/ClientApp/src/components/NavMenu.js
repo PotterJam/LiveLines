@@ -7,8 +7,7 @@ import { GoFlame } from 'react-icons/go';
 import { getData } from "../Api";
 
 export function NavMenu(props) {
-  const { user, loginAttempted } = useContext(UserContext);
-  const [streak, setStreak] = useState('');
+  const { user, loginAttempted, setStreak } = useContext(UserContext);
 
   const loginWithGithub = `api/login?returnUrl=${window.location.origin}/`;
   const logout = 'api/logout';
@@ -30,7 +29,7 @@ export function NavMenu(props) {
       ? <div className="inline-block">
           <span className="font-medium mr-3 text-lg text-slate-800">{user.username}</span>
           <a href={logout}><FiLogOut className="mb-1 inline-block"/></a>
-          <GoFlame className="ml-3 mb-1 inline-block" /><span>{streak}</span>
+          <GoFlame className="ml-3 mb-1 inline-block" /><span>{user.streak}</span>
         </div>
       : <a
           href={loginWithGithub}
