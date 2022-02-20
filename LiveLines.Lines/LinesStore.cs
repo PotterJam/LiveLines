@@ -28,12 +28,11 @@ public class LinesStore : ILinesStore
                     SELECT l.id, l.body, l.date_for, s.spotify_id
                     FROM lines l
                     LEFT JOIN songs s on s.id = l.song_id
-                    WHERE l.user_id = @userid
-                    ORDER BY l.date_for DESC;";
+                    WHERE l.user_id = @userid;";
 
             var reader = await cmd.ExecuteReaderAsync();
             var lines = new List<Line>();
-                
+            
             while (await reader.ReadAsync())
             {
                 var line = ReadLine(reader);

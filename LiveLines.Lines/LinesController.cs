@@ -27,7 +27,10 @@ public class LinesController : ControllerBase
     public async Task<IEnumerable<LineResponse>> FetchLines()
     {
         var user = User.GetLoggedInUser();
-        var lines = await _linesService.GetLines(user);
+<
+        var lines = (await _linesService.GetLines(user))
+            .OrderByDescending(x => x.DateFor);
+        
         return lines.Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor));
     }
 
