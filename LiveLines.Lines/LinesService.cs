@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using LiveLines.Api;
 using LiveLines.Api.Lines;
 using LiveLines.Api.Songs;
 using LiveLines.Api.Users;
@@ -22,11 +19,11 @@ public class LinesService : ILinesService
         _songService = songService;
     }
 
-    public async Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser, Privacy privacy)
+    public async Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser, Privacy? privacy)
     {
         var lines = await _linesStore.GetLines(loggedInUser);
         
-        if (privacy == Privacy.All)
+        if (privacy == null)
         {
             return lines;
         }

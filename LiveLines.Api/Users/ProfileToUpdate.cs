@@ -1,3 +1,5 @@
-﻿namespace LiveLines.Api;
+﻿using LiveLines.Api.Lines;
 
-public record ProfileToUpdate(Privacy DefaultPrivacy);
+namespace LiveLines.Api.Users;
+
+public record ProfileToUpdate(Privacy LinePrivacy);

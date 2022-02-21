@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Extensions;
-using LiveLines.Api;
 using LiveLines.Api.Lines;
 using LiveLines.Api.Streaks;
 using Microsoft.AspNetCore.Authorization;

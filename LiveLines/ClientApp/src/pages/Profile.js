@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FiLogOut } from 'react-icons/fi';
 import { getData, postData } from "../Api";
 import { UserContext } from '../auth/UserContext';
-import {PRIVACY_LEVELS} from "../components/Enum";
+import {PRIVACY_LEVEL} from "../components/Enum";
 
 export function Profile() {
   
   const { user } = useContext(UserContext);
 
   const [username, setUsername] = useState("");
-  const [defaultPrivacy, setDefaultPrivacy] = useState("");
+  const [linePrivacy, setLinePrivacy] = useState("");
 
   const logout = 'api/logout';
   
@@ -17,7 +17,7 @@ export function Profile() {
     const resp = await getData("api/user/profile");
     const profileResp = await resp.json();
     setUsername(profileResp.username);
-    setDefaultPrivacy(profileResp.defaultPrivacy);
+    setLinePrivacy(profileResp.linePrivacy);
   }
   
   useEffect(() => {
@@ -27,15 +27,15 @@ export function Profile() {
   }, [user.authenticated]);
 
   const updateProfile = async () => {
-    const updatedProfileResp = await postData("api/user/profile", { DefaultPrivacy: defaultPrivacy });
+    const updatedProfileResp = await postData("api/user/profile", { linePrivacy: linePrivacy });
   
     const updatedProfile = await updatedProfileResp.json();
     setUsername(updatedProfile.username);
-    setDefaultPrivacy(updatedProfile.defaultPrivacy);
+    setLinePrivacy(updatedProfile.linePrivacy);
   }
 
   const setPrivacySelection = e => {
-    setDefaultPrivacy(e.target.value);
+    setLinePrivacy(e.target.value);
   }
   
   return (
@@ -45,10 +45,10 @@ export function Profile() {
           <div>
             <label className="pr-2">
               Default Line Privacy:
-              <select value={defaultPrivacy} onChange={setPrivacySelection}>
-                <option value={PRIVACY_LEVELS.PRIVATE}>Private</option>
-                <option value={PRIVACY_LEVELS.UNLISTED}>Unlisted</option>
-                <option value={PRIVACY_LEVELS.PUBLIC}>Public</option>
+              <select value={linePrivacy} onChange={setPrivacySelection}>
+                <option value={PRIVACY_LEVEL.PRIVATE}>{PRIVACY_LEVEL.PRIVATE}</option>
+                <option value={PRIVACY_LEVEL.UNLISTED}>{PRIVACY_LEVEL.UNLISTED}</option>
+                <option value={PRIVACY_LEVEL.PUBLIC}>{PRIVACY_LEVEL.PUBLIC}</option>
               </select>
             </label>
           </div>

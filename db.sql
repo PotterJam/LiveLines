@@ -71,7 +71,7 @@ BEGIN;
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id UUID REFERENCES users (id) UNIQUE NOT NULL,
         last_updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-        default_privacy PRIVACY NOT NULL DEFAULT 'Private'
+        line_privacy PRIVACY NOT NULL DEFAULT 'Private'
     );
     
     CREATE INDEX profiles_user_id_idx ON profiles (user_id);
@@ -83,4 +83,3 @@ BEGIN;
     FROM users;
 COMMIT;
 -- end
-

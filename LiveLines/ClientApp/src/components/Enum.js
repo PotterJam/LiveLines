@@ -1,5 +1,5 @@
-export const PRIVACY_LEVELS = {
-    PRIVATE: 0,
-    UNLISTED: 1,
-    PUBLIC: 2,
+export const PRIVACY_LEVEL = {
+    PRIVATE: "Private",
+    UNLISTED: "Unlisted",
+    PUBLIC: "Public",
 }

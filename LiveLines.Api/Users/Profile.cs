@@ -1,5 +1,6 @@
 ﻿using System;
+using LiveLines.Api.Lines;
 
 namespace LiveLines.Api.Users;
 
-public record Profile(Guid InternalId, Guid UserId, Privacy DefaultPrivacy);
+public record Profile(Guid InternalId, Guid UserId, Privacy LinePrivacy);

@@ -2,8 +2,8 @@
 using System.Data.Common;
 using System.Threading.Tasks;
 using Extensions;
-using LiveLines.Api;
 using LiveLines.Api.Database;
+using LiveLines.Api.Lines;
 using LiveLines.Api.Users;
 
 namespace LiveLines.Users;
@@ -37,16 +37,16 @@ public class ProfileStore : IProfileStore
         });
     }
 
-    public async Task<Profile> UpdateProfile(LoggedInUser user, Privacy defaultPrivacy)
+    public async Task<Profile> UpdateProfile(LoggedInUser user, Privacy linePrivacy)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
             cmd.AddParam("@userId", user.InternalId);
-            cmd.AddParam("@defaultPrivacy", defaultPrivacy);
+            cmd.AddEnumParam("@linePrivacy", linePrivacy);
 
             cmd.CommandText = @"
                     UPDATE profiles
-                    SET default_privacy = @defaultPrivacy
+                    SET line_privacy = @linePrivacy
                     WHERE user_id = @userId
                     RETURNING id;";
 
@@ -67,7 +67,7 @@ public class ProfileStore : IProfileStore
             cmd.AddParam("@userId", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT p.id, p.user_id, p.default_privacy
+                    SELECT p.id, p.user_id, p.line_privacy
                     FROM profiles p
                     LEFT JOIN users u ON p.user_id = u.id
                     WHERE p.id = @profileId
@@ -90,7 +90,7 @@ public class ProfileStore : IProfileStore
             cmd.AddParam("@userId", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT p.id, p.user_id, p.default_privacy
+                    SELECT p.id, p.user_id, p.line_privacy
                     FROM profiles p
                     WHERE p.user_id = @userId
                     LIMIT 1;";
@@ -108,13 +108,8 @@ public class ProfileStore : IProfileStore
     {
         var id = reader.Get<Guid>("id");
         var userId = reader.Get<Guid>("user_id"); 
-        var defaultPrivacyStr = reader.Get<string>("default_privacy"); 
-        
-        if (!Enum.TryParse<Privacy>(defaultPrivacyStr, out var defaultPrivacy))
-        {
-            throw new ProfileStoreException($"Could not parse privacy {defaultPrivacyStr} as Privacy Enum.");
-        }
+        var linePrivacy = reader.GetEnum<Privacy>("line_privacy");
 
-        return new Profile(id, userId, defaultPrivacy);
+        return new Profile(id, userId, linePrivacy);
     }
 }

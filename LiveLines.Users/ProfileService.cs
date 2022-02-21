@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using LiveLines.Api;
 using LiveLines.Api.Users;
 
 namespace LiveLines.Users;
@@ -20,7 +19,7 @@ public class ProfileService : IProfileService
 
     public async Task<Profile> UpdateProfile(LoggedInUser user, ProfileToUpdate profileToUpdate)
     {
-        return await _profileStore.UpdateProfile(user, profileToUpdate.DefaultPrivacy);
+        return await _profileStore.UpdateProfile(user, profileToUpdate.LinePrivacy);
     }
 
     public async Task<Profile> GetProfile(LoggedInUser user)

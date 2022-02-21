@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Extensions;
-using LiveLines.Api;
 using LiveLines.Api.Database;
 using LiveLines.Api.Lines;
 using LiveLines.Api.Users;
@@ -128,13 +127,8 @@ public class LinesStore : ILinesStore
         var body = reader.Get<string>("body");
         var dateFor = reader.Get<DateTime>("date_for");
         var spotifyId = reader.GetNullable<string?>("spotify_id"); 
-        var privacyStr = reader.Get<string>("privacy");
-
-        if (!Enum.TryParse<Privacy>(privacyStr, out var privacy))
-        {
-            throw new LinesStoreException($"Could not parse privacy {privacyStr} as Privacy Enum.");
-        }
-
+        var privacy = reader.GetEnum<Privacy>("privacy");
+        
         return new Line(id, body, spotifyId, dateFor, privacy);
     }
 }

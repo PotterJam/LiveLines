@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Extensions;
-using LiveLines.Api;
+using LiveLines.Api.Lines;
 using LiveLines.Api.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +19,7 @@ public class UserController : ControllerBase
         _profileService = profileService;
     }
     
-    public record ProfileResponse(string Username, Privacy DefaultPrivacy);
+    public record ProfileResponse(string Username, string LinePrivacy);
     
     [HttpGet, Route("user/profile")]
     public async Task<ProfileResponse> GetProfile()
@@ -27,21 +27,20 @@ public class UserController : ControllerBase
         var user = User.GetLoggedInUser();
         var profile = await _profileService.GetProfile(user);
         
-        return new ProfileResponse(user.Username, profile.DefaultPrivacy);
+        return new ProfileResponse(user.Username, profile.LinePrivacy.ToString());
     }
     
-    public record ProfileRequest(string DefaultPrivacy);
+    public record ProfileRequest(string LinePrivacy);
     
     [HttpPost, Route("user/profile")]
-    public Task<ProfileResponse> UpdateProfile([FromBody] ProfileRequest profileRequest)
+    public async Task<ProfileResponse> UpdateProfile([FromBody] ProfileRequest profileRequest)
     {
         var user = User.GetLoggedInUser();
-
-        throw new NotImplementedException();
+        var linePrivacy = Enum.Parse<Privacy>(profileRequest.LinePrivacy);
         
-        // var profileToUpdate = new ProfileToUpdate(profileRequest.DefaultPrivacy);
-        // var profile = await _profileService.UpdateProfile(user, profileToUpdate);
-        //
-        // return new ProfileResponse(user.Username, profile.DefaultPrivacy);
+        var profileToUpdate = new ProfileToUpdate(linePrivacy);
+        var profile = await _profileService.UpdateProfile(user, profileToUpdate);
+        
+        return new ProfileResponse(user.Username, profile.LinePrivacy.ToString());
     }
 }
