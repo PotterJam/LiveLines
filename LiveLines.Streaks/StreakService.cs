@@ -18,7 +18,7 @@ public class StreakService : IStreakService
         _expiringStreakCache = expiringStreakCache;
     }
 
-    private string GetStreakCacheKey(LoggedInUser user) => StreakCachePrefix + user;
+    private string GetStreakCacheKey(LoggedInUser user) => StreakCachePrefix + user.InternalId;
 
     public async Task<int> IncrementStreak(LoggedInUser user)
     {
