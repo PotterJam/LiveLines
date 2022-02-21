@@ -30,16 +30,18 @@ public class UserController : ControllerBase
         return new ProfileResponse(user.Username, profile.DefaultPrivacy);
     }
     
-    public record ProfileRequest(Privacy DefaultPrivacy);
+    public record ProfileRequest(string DefaultPrivacy);
     
     [HttpPost, Route("user/profile")]
-    public async Task<ProfileResponse> UpdateProfile([FromBody] ProfileRequest profileRequest)
+    public Task<ProfileResponse> UpdateProfile([FromBody] ProfileRequest profileRequest)
     {
         var user = User.GetLoggedInUser();
+
+        throw new NotImplementedException();
         
-        var profileToUpdate = new ProfileToUpdate(profileRequest.DefaultPrivacy);
-        var profile = await _profileService.UpdateProfile(user, profileToUpdate);
-        
-        return new ProfileResponse(user.Username, profile.DefaultPrivacy);
+        // var profileToUpdate = new ProfileToUpdate(profileRequest.DefaultPrivacy);
+        // var profile = await _profileService.UpdateProfile(user, profileToUpdate);
+        //
+        // return new ProfileResponse(user.Username, profile.DefaultPrivacy);
     }
 }

@@ -27,32 +27,32 @@ export function Profile() {
   }, [user.authenticated]);
 
   const updateProfile = async () => {
-    const updatedProfileResp = await postData("api/user/profile", {
-      DefaultPrivacy: defaultPrivacy
-    });
-    
+    const updatedProfileResp = await postData("api/user/profile", { DefaultPrivacy: defaultPrivacy });
+  
     const updatedProfile = await updatedProfileResp.json();
     setUsername(updatedProfile.username);
     setDefaultPrivacy(updatedProfile.defaultPrivacy);
+  }
+
+  const setPrivacySelection = e => {
+    setDefaultPrivacy(e.target.value);
   }
   
   return (
     <div className="h-max mx-auto border border-slate-300 bg-white w-max mt-10">
       <div className='flex flex-col items-center px-20 py-10'>
         <div className='text-3xl pb-5'>{username}</div>
-        <form className="py-5" onSubmit={updateProfile}>
           <div>
             <label className="pr-2">
               Default Line Privacy:
-              <select value={defaultPrivacy} onChange={setDefaultPrivacy}>
+              <select value={defaultPrivacy} onChange={setPrivacySelection}>
                 <option value={PRIVACY_LEVELS.PRIVATE}>Private</option>
                 <option value={PRIVACY_LEVELS.UNLISTED}>Unlisted</option>
                 <option value={PRIVACY_LEVELS.PUBLIC}>Public</option>
               </select>
             </label>
           </div>
-          <input type="submit" value="Update"/>
-        </form>
+          <button onClick={updateProfile}>Update</button>
         <div>
           <span>Logout</span>
           <a href={logout}><FiLogOut className="ml-2 mb-1 inline-block"/></a>
