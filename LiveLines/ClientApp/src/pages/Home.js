@@ -50,12 +50,10 @@ export function Home() {
       setLinePlaceholder("");
     } else if (postYesterdayInput) {
       setLinePlaceholder("What's yesterday's line?");
-    } else {
-      if (canPostToday) {
+    } else if (canPostToday) {
         setLinePlaceholder("What's today's line?");
-      } else {
-        setLinePlaceholder("You've already posted today!");
-      }
+    } else {
+      setLinePlaceholder("You've already posted today!");
     }
   }, [canPostToday, postYesterdayInput]);
   
