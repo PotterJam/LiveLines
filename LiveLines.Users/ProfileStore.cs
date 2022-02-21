@@ -94,7 +94,12 @@ public class ProfileStore : IProfileStore
     {
         var id = reader.Get<Guid>("id");
         var userId = reader.Get<Guid>("user_id"); 
-        var defaultPrivacy = reader.Get<Privacy>("default_privacy"); 
+        var defaultPrivacyStr = reader.Get<string>("default_privacy"); 
+        
+        if (!Enum.TryParse<Privacy>(defaultPrivacyStr, out var defaultPrivacy))
+        {
+            throw new ProfileStoreException($"Could not parse privacy {defaultPrivacyStr} as Privacy Enum.");
+        }
 
         return new Profile(id, userId, defaultPrivacy);
     }
