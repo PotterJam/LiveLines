@@ -3,16 +3,15 @@ import { UserContext } from "./UserContext";
 
 export const UserProvider = ({ children }) => {
     // User is the name of the "data" that gets stored in context
-    const [user, setUser] = useState({ username: '', authenticated: null, streak: '', defaultPrivacy: null });
+    const [user, setUser] = useState({ username: '', authenticated: null, streak: '' });
 
     const loginAttempted = user.authenticated !== null;
   
-    const login = (name, privacy) => {
+    const login = name => {
       setUser(_ => ({
         username: name,
         authenticated: true,
-        streak: '',
-        defaultPrivacy : privacy
+        streak: ''
       }));
     };
   
@@ -20,8 +19,7 @@ export const UserProvider = ({ children }) => {
       setUser(_ => ({
         username: '',
         authenticated: false,
-        streak: '',
-        defaultPrivacy: null
+        streak: ''
       }));
     };
     

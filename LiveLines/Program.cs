@@ -29,11 +29,6 @@ builder.Services.AddAuthentication(options =>
     .AddOAuth("GitHub", oAuthConfigurer.GitHub);
 
 builder.Services.AddControllers();
-//     .AddJsonOptions(x =>
-// {
-//     // serialize enums as strings in api responses (e.g. Role)
-//     x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-// });
 builder.Services.AddMemoryCache();
 
 // In production, the React files will be served from this directory
