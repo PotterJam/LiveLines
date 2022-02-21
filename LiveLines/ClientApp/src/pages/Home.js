@@ -16,8 +16,8 @@ export function Home() {
   const [canPostToday, setCanPostToday] = useState(null);
   const [canPostYesterday, setCanPostYesterday] = useState(null);
   const [postYesterdayInput, setPostYesterdayInput] = useState(false);
-
-  const { user, loginAttempted } = useContext(UserContext);
+  
+  const { user, loginAttempted, setStreak } = useContext(UserContext);
 
   // TODO: Move this kind of logic to a service layer .js file
   const parseLine = line => ({ ...line, dateFor: parseISO(line.dateFor) });
@@ -67,6 +67,9 @@ export function Home() {
       ...(songEnabled && songInput !== '' && { SongId: songInput }),
       ForYesterday: postYesterdayInput
     });
+    
+    // update the streak in the nav bar
+    setStreak(user.streak + 1);
     
     const newLine = await newLineResp.json();
     const parsedNewLine = parseLine(newLine);

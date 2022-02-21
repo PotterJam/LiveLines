@@ -27,7 +27,7 @@ public class LinesService : ILinesService
         return await _linesStore.GetLines(loggedInUser);
     }
 
-    public async Task<Line> CreateLine(LoggedInUser loggedInUser, LineToCreate lineToCreate)
+    public async Task<Line> CreateLine(LoggedInUser user, LineToCreate lineToCreate)
     {
         // TODO: will need to validate the song id input (don't send an invalid input to the below)
         // perhaps in the song table have a flag for songs that didn't get populated properly so we can display it in the frontend
@@ -36,7 +36,7 @@ public class LinesService : ILinesService
             ? await _songService.AddSong(lineToCreate.SpotifySongId)
             : null;
 
-        return await _linesStore.CreateLine(loggedInUser, lineToCreate.Body, songId, lineToCreate.ForYesterday);
+        return await _linesStore.CreateLine(user, lineToCreate.Body, songId, lineToCreate.ForYesterday);
     }
 
     public async Task<LineOperations> GetLineOperations(LoggedInUser loggedInUser)

@@ -25,6 +25,7 @@
         <ProjectReference Include="..\LiveLines.Lines\LiveLines.Lines.csproj" />
         <ProjectReference Include="..\LiveLines.Security\LiveLines.Security.csproj" />
         <ProjectReference Include="..\LiveLines.Songs\LiveLines.Songs.csproj" />
+        <ProjectReference Include="..\LiveLines.Streaks\LiveLines.Streaks.csproj" />
         <ProjectReference Include="..\LiveLines.Users\LiveLines.Users.csproj" />
     </ItemGroup>
 
