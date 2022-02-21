@@ -59,3 +59,11 @@ BEGIN;
 COMMIT;
 -- end 
 
+-- v3: add privacy to lines
+BEGIN;
+    ALTER TABLE lines
+    ADD COLUMN is_unlisted BOOLEAN DEFAULT FALSE,
+    ADD COLUMN is_public BOOLEAN DEFAULT FALSE
+    CONSTRAINT not_unlisted_and_private CHECK ( NOT ( is_unlisted AND is_public ) );
+COMMIT;
+-- end
