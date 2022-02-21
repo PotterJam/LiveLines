@@ -48,7 +48,7 @@ public class LinesStore : ILinesStore
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
-            DateTime today = DateTime.Today;
+            var today = DateTime.UtcNow.Date;
             
             cmd.AddParam("@userid", loggedInUser.InternalId);
             cmd.AddParam("@body", body);

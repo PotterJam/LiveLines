@@ -41,14 +41,14 @@ public class LinesService : ILinesService
 
     public async Task<LineOperations> GetLineOperations(LoggedInUser loggedInUser)
     {
-        IEnumerable<DateTime> latestDates = (await _linesStore.GetLatestLineDates(loggedInUser, 2)).ToArray();
+        var latestDates = (await _linesStore.GetLatestLineDates(loggedInUser, 2)).ToArray();
 
-        DateTime now = DateTime.UtcNow;
-        DateTime today = now.Date;
-        DateTime yesterday = today.AddDays(-1);
+        var now = DateTime.UtcNow;
+        var today = now.Date;
+        var yesterday = today.AddDays(-1);
 
-        bool canPostToday = !latestDates.Contains(today);
-        bool canPostYesterday = canPostToday && now.Hour < 12 && !latestDates.Contains(yesterday);
+        var canPostToday = !latestDates.Contains(today);
+        var canPostYesterday = canPostToday && now.Hour < 12 && !latestDates.Contains(yesterday);
         
         return new LineOperations(canPostToday, canPostYesterday);
     }
