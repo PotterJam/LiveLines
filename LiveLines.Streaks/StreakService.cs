@@ -43,19 +43,19 @@ public class StreakService : IStreakService
         // could do better than this, perhaps there's a fancy query we can do
         // that counts db-side consecutive line dates and short circuits. This will do for now.
         var orderedLines = (await _linesService.GetLines(loggedInUser))
-            .OrderByDescending(x => x.CreatedAt);
+            .OrderByDescending(x => x.DateFor);
 
         var previous = DateTime.Now;
         var count = 0;
 
         foreach (var line in orderedLines)
         {
-            if ((previous.Date - line.CreatedAt.Date).TotalDays > 1)
+            if ((previous.Date - line.DateFor.Date).TotalDays > 1)
             {
                 break;
             }
 
-            previous = line.CreatedAt;
+            previous = line.DateFor;
             count++;
         }
 
