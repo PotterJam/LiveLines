@@ -1,4 +1,5 @@
-﻿using LiveLines.Api.Lines;
+﻿using LiveLines.Api;
+using LiveLines.Api.Lines;
 using LiveLines.Api.Streaks;
 using LiveLines.Api.Users;
 using Microsoft.Extensions.Caching.Memory;
@@ -42,7 +43,7 @@ public class StreakService : IStreakService
     {
         // could do better than this, perhaps there's a fancy query we can do
         // that counts db-side consecutive line dates and short circuits. This will do for now.
-        var orderedLines = (await _linesService.GetLines(loggedInUser))
+        var orderedLines = (await _linesService.GetLines(loggedInUser, Privacy.All))
             .OrderByDescending(x => x.DateFor);
 
         var previous = DateTime.Now;

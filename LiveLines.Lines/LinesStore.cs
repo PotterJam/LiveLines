@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Extensions;
+using LiveLines.Api;
 using LiveLines.Api.Database;
 using LiveLines.Api.Lines;
 using LiveLines.Api.Users;
@@ -25,7 +26,7 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT l.id, l.body, l.date_for, s.spotify_id
+                    SELECT l.id, l.body, l.date_for, s.spotify_id, l.privacy
                     FROM lines l
                     LEFT JOIN songs s on s.id = l.song_id
                     WHERE l.user_id = @userid;";
@@ -43,7 +44,7 @@ public class LinesStore : ILinesStore
         });
     }
 
-    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId, bool forYesterday)
+    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId, bool forYesterday, Privacy privacy)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
@@ -53,10 +54,11 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@body", body);
             cmd.AddParam("@songId", songId);
             cmd.AddParam("@dateFor", forYesterday ? today.AddDays(-1) : today);
+            cmd.AddParam("@privacy", privacy);
 
             cmd.CommandText = @"
-                    INSERT INTO lines (user_id, body, song_id, date_for)
-                    VALUES (@userid, @body, @songId, @dateFor)
+                    INSERT INTO lines (user_id, body, song_id, date_for, privacy)
+                    VALUES (@userid, @body, @songId, @dateFor, @privacy)
                     RETURNING id;";
 
             var guid = (Guid?) await cmd.ExecuteScalarAsync();
@@ -76,7 +78,7 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT l.id, l.body, l.date_for, s.spotify_id
+                    SELECT l.id, l.body, l.date_for, s.spotify_id, l.privacy
                     FROM lines l
                     LEFT JOIN songs s on s.id = l.song_id
                     WHERE l.id = @lineid
@@ -126,7 +128,13 @@ public class LinesStore : ILinesStore
         var body = reader.Get<string>("body");
         var dateFor = reader.Get<DateTime>("date_for");
         var spotifyId = reader.GetNullable<string?>("spotify_id"); 
+        var privacyStr = reader.Get<string>("privacy");
 
-        return new Line(id, body, spotifyId, dateFor);
+        if (!Enum.TryParse<Privacy>(privacyStr, out var privacy))
+        {
+            throw new LinesStoreException($"Could not parse privacy {privacyStr} as Privacy Enum.");
+        }
+
+        return new Line(id, body, spotifyId, dateFor, privacy);
     }
 }

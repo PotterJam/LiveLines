@@ -22,9 +22,16 @@ public class LinesService : ILinesService
         _songService = songService;
     }
 
-    public async Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser)
+    public async Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser, Privacy privacy)
     {
-        return await _linesStore.GetLines(loggedInUser);
+        var lines = await _linesStore.GetLines(loggedInUser);
+        
+        if (privacy == Privacy.All)
+        {
+            return lines;
+        }
+
+        return lines.Where(line => line.Privacy == privacy);
     }
 
     public async Task<Line> CreateLine(LoggedInUser user, LineToCreate lineToCreate)
@@ -36,7 +43,7 @@ public class LinesService : ILinesService
             ? await _songService.AddSong(lineToCreate.SpotifySongId)
             : null;
 
-        return await _linesStore.CreateLine(user, lineToCreate.Body, songId, lineToCreate.ForYesterday);
+        return await _linesStore.CreateLine(user, lineToCreate.Body, songId, lineToCreate.ForYesterday, lineToCreate.Privacy);
     }
 
     public async Task<LineOperations> GetLineOperations(LoggedInUser loggedInUser)

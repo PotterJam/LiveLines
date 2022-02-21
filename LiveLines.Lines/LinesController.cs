@@ -27,24 +27,24 @@ public class LinesController : ControllerBase
     public record LineResponse(Guid Id, string Message, string? SpotifyId, DateTime DateFor);
     
     [HttpGet, Route("lines")]
-    public async Task<IEnumerable<LineResponse>> FetchLines()
+    public async Task<IEnumerable<LineResponse>> FetchLines(Privacy privacy)
     {
         var user = User.GetLoggedInUser();
 
-        var lines = (await _linesService.GetLines(user))
+        var lines = (await _linesService.GetLines(user, privacy))
             .OrderByDescending(x => x.DateFor);
         
         return lines.Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor));
     }
 
-    public record LineRequest(string Message, string? SongId, bool ForYesterday);
+    public record LineRequest(string Message, string? SongId, bool ForYesterday, Privacy Privacy);
 
     [HttpPost, Route("line")]
     public async Task<LineResponse> CreateLine([FromBody] LineRequest lineRequest)
     {
         var user = User.GetLoggedInUser();
 
-        var lineToCreate = new LineToCreate(lineRequest.Message, lineRequest.SongId, lineRequest.ForYesterday);
+        var lineToCreate = new LineToCreate(lineRequest.Message, lineRequest.SongId, lineRequest.ForYesterday, lineRequest.Privacy);
         var line = await _linesService.CreateLine(user, lineToCreate);
 
         await _streakService.IncrementStreak(user);
