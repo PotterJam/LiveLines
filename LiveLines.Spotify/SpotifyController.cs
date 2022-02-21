@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Text.Json.Serialization;
-using Extensions;
+﻿using Extensions;
 using LiveLines.Api.Spotify;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -11,16 +9,21 @@ namespace LiveLines.Spotify;
 [ApiController, Route("api")]
 public class SpotifyController : ControllerBase
 {
-    private static readonly HttpClient HttpClient = new();
-
     private readonly ISpotifyService _spotifyService;
+    private readonly string _spotifyClientId;
+    private readonly string _spotifyCallbackUrl;
+    private readonly string _profileCallbackUrl;
 
-    public SpotifyController(ISpotifyService spotifyService)
+    public SpotifyController(IConfiguration configuration, ISpotifyService spotifyService)
     {
+        _spotifyClientId = configuration.GetValue<string>("SPOTIFY_CLIENT_ID");
         _spotifyService = spotifyService;
+        
+        var hostName = configuration.GetValue<string>("HOST_NAME");
+        _spotifyCallbackUrl = hostName + "/api/spotify/callback";
+        _profileCallbackUrl = hostName + "/profile";
     }
-    private const string RedirectUri = "https://localhost:44492/api/spotify/callback";
-    
+
     [Authorize, Route("spotify/login")]
     public IActionResult Login()
     {
@@ -29,9 +32,9 @@ public class SpotifyController : ControllerBase
         var query = new QueryBuilder
         {
             {"response_type", "code"},
-            {"client_id", ClientId},
+            {"client_id", _spotifyClientId},
             {"scope", scope},
-            {"redirect_uri", RedirectUri},
+            {"redirect_uri", _spotifyCallbackUrl},
         };
 
         return Redirect("https://accounts.spotify.com/authorize" + query);
@@ -45,13 +48,8 @@ public class SpotifyController : ControllerBase
             throw new ArgumentNullException($"Spotify login callback is missing the code.");
         }
 
-        await _spotifyService.UpsertSpotifyCredentials(
-            user: User.GetLoggedInUser(),
-            code: code.First(),
-            redirectUri: RedirectUri,
-            clientId: ClientId,
-            clientSecret: ClientSecret);
+        await _spotifyService.UpsertSpotifyCredentials(User.GetLoggedInUser(), code.First(), _spotifyCallbackUrl);
         
-        return Redirect("https://localhost:44492/profile");
+        return Redirect(_profileCallbackUrl);
     }
 }

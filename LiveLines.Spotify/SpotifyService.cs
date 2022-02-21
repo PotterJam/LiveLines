@@ -10,24 +10,28 @@ public class SpotifyService : ISpotifyService
     private static readonly HttpClient HttpClient = new ();
     
     private readonly ISpotifyCredentialsStore _spotifyCredentialsStore;
-
-    public SpotifyService(ISpotifyCredentialsStore spotifyCredentialsStore)
+    private readonly string _spotifyClientId;
+    private readonly string _spotifyClientSecret;
+    
+    public SpotifyService(IConfiguration configuration, ISpotifyCredentialsStore spotifyCredentialsStore)
     {
+        _spotifyClientId = configuration.GetValue<string>("SPOTIFY_CLIENT_ID");
+        _spotifyClientSecret = configuration.GetValue<string>("SPOTIFY_CLIENT_SECRET");
         _spotifyCredentialsStore = spotifyCredentialsStore;
     }
 
-    public async Task<SpotifyCredentials> GetSpotifyCredentials(LoggedInUser user, string clientId, string clientSecret)
+    public async Task<SpotifyCredentials> GetSpotifyCredentials(LoggedInUser user)
     {
         var spotifyCredentials = await _spotifyCredentialsStore.GetCredentialsForUser(user);
         if (spotifyCredentials.ExpiresAt < DateTime.UtcNow)
         {
-            return await RefreshAccessToken(spotifyCredentials.RefreshToken, clientId, clientSecret);
+            return await RefreshAccessToken(spotifyCredentials.RefreshToken);
         }
 
         return spotifyCredentials;
     }
 
-    private async Task<SpotifyCredentials> RefreshAccessToken(string refreshTokenRequest, string clientId, string clientSecret)
+    private async Task<SpotifyCredentials> RefreshAccessToken(string refreshTokenRequest)
     {
         var data = new Dictionary<string, string>
         {
@@ -35,21 +39,21 @@ public class SpotifyService : ISpotifyService
             {"grant_type", "refresh_token"},
         };
 
-        var credentialsResponse = await GetSpotifyCredentialsFromOptions(clientId, clientSecret, data);
+        var credentialsResponse = await GetSpotifyCredentialsFromOptions(data);
 
         return GetCredentialsFromResponse(credentialsResponse);
     }
 
-    public async Task UpsertSpotifyCredentials(LoggedInUser user, string code, string redirectUri, string clientId, string clientSecret)
+    public async Task UpsertSpotifyCredentials(LoggedInUser user, string code, string redirectUrl)
     {
         var data = new Dictionary<string, string>
         {
             {"code", code},
             {"grant_type", "authorization_code"},
-            {"redirect_uri", redirectUri},
+            {"redirect_uri", redirectUrl},
         };
 
-        var credentialsResponse = await GetSpotifyCredentialsFromOptions(clientId, clientSecret, data);
+        var credentialsResponse = await GetSpotifyCredentialsFromOptions(data);
         var spotifyCredentials = GetCredentialsFromResponse(credentialsResponse);
 
         await _spotifyCredentialsStore.UpsertCredentialsForUser(user, spotifyCredentials);
@@ -64,12 +68,12 @@ public class SpotifyService : ISpotifyService
         return new SpotifyCredentials(accessToken, tokenType, scope, expiresAt, refreshToken);
     }
 
-    private static async Task<SpotifyCredentialsResponse> GetSpotifyCredentialsFromOptions(string clientId, string clientSecret, Dictionary<string, string> data)
+    private async Task<SpotifyCredentialsResponse> GetSpotifyCredentialsFromOptions(Dictionary<string, string> data)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, "https://accounts.spotify.com/api/token");
         request.Content = new FormUrlEncodedContent(data);
 
-        var authValue = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"));
+        var authValue = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{_spotifyClientId}:{_spotifyClientSecret}"));
         request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 
         var response = await HttpClient.SendAsync(request);
