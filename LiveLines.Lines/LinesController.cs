@@ -45,7 +45,7 @@ public class LinesController : ControllerBase
 
     public record LineOperationsResponse(bool CanPostToday, bool CanPostYesterday);
 
-    [HttpGet, Route("lineOperations")]
+    [HttpGet, Route("line/operations")]
     public async Task<LineOperationsResponse> FetchLineOperations()
     {
         var user = User.GetLoggedInUser();

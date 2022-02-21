@@ -29,7 +29,7 @@ export function Home() {
   }
 
   const getLineOperations = async () => {
-    const resp = await getData("api/lineOperations");
+    const resp = await getData("api/line/operations");
     const operationsResp = await resp.json();
     setCanPostToday(operationsResp.canPostToday);
     setCanPostYesterday(operationsResp.canPostYesterday);
