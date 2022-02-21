@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LiveLines.Spotify;
 
+[Authorize]
 [ApiController, Route("api")]
 public class SpotifyController : ControllerBase
 {
@@ -24,7 +25,7 @@ public class SpotifyController : ControllerBase
         _profileCallbackUrl = hostName + "/profile";
     }
 
-    [Authorize, Route("spotify/login")]
+    [Route("spotify/login")]
     public IActionResult Login()
     {
         const string scope = "user-read-private user-read-email";
@@ -40,7 +41,7 @@ public class SpotifyController : ControllerBase
         return Redirect("https://accounts.spotify.com/authorize" + query);
     }
     
-    [Authorize, Route("spotify/callback")]
+    [Route("spotify/callback")]
     public async Task<IActionResult> Callback()
     {
         if (!Request.Query.TryGetValue("code", out var code))
@@ -52,4 +53,5 @@ public class SpotifyController : ControllerBase
         
         return Redirect(_profileCallbackUrl);
     }
+
 }
