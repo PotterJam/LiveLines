@@ -21,14 +21,14 @@ public class LinesController : ControllerBase
         _linesService = linesService;
     }
 
-    public record LineResponse(Guid Id, string Message, string? SpotifyId, DateTime CreatedAt, DateTime DateFor);
+    public record LineResponse(Guid Id, string Message, string? SpotifyId, DateTime DateFor);
     
     [HttpGet, Route("lines")]
     public async Task<IEnumerable<LineResponse>> FetchLines()
     {
         var user = User.GetLoggedInUser();
         var lines = await _linesService.GetLines(user);
-        return lines.Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.CreatedAt, line.DateFor));
+        return lines.Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor));
     }
 
     public record LineRequest(string Message, string? SongId, bool ForYesterday);
@@ -40,7 +40,7 @@ public class LinesController : ControllerBase
 
         var lineToCreate = new LineToCreate(lineRequest.Message, lineRequest.SongId, lineRequest.ForYesterday);
         var line = await _linesService.CreateLine(user, lineToCreate);
-        return new LineResponse(line.Id, line.Message, line.SpotifyId, line.CreatedAt, line.DateFor);
+        return new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor);
     }
 
     public record LineOperationsResponse(bool CanPostToday, bool CanPostYesterday);

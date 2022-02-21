@@ -25,11 +25,11 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT l.id, l.body, l.created_at, l.date_for, s.spotify_id
+                    SELECT l.id, l.body, l.date_for, s.spotify_id
                     FROM lines l
                     LEFT JOIN songs s on s.id = l.song_id
                     WHERE l.user_id = @userid
-                    ORDER BY created_at DESC;";
+                    ORDER BY l.date_for DESC;";
 
             var reader = await cmd.ExecuteReaderAsync();
             var lines = new List<Line>();
@@ -77,7 +77,7 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT l.id, l.body, l.created_at, l.date_for, s.spotify_id
+                    SELECT l.id, l.body, l.date_for, s.spotify_id
                     FROM lines l
                     LEFT JOIN songs s on s.id = l.song_id
                     WHERE l.id = @lineid
@@ -125,10 +125,9 @@ public class LinesStore : ILinesStore
     {
         var id = reader.Get<Guid>("id");
         var body = reader.Get<string>("body");
-        var createdAt = reader.Get<DateTime>("created_at");
         var dateFor = reader.Get<DateTime>("date_for");
         var spotifyId = reader.GetNullable<string?>("spotify_id"); 
 
-        return new Line(id, body, spotifyId, createdAt, dateFor);
+        return new Line(id, body, spotifyId, dateFor);
     }
 }
