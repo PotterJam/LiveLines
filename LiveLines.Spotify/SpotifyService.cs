@@ -20,9 +20,15 @@ public class SpotifyService : ISpotifyService
         _spotifyCredentialsStore = spotifyCredentialsStore;
     }
 
-    public async Task<SpotifyCredentials> GetSpotifyCredentials(LoggedInUser user)
+    public async Task<SpotifyCredentials?> GetSpotifyCredentials(LoggedInUser user)
     {
         var spotifyCredentials = await _spotifyCredentialsStore.GetCredentialsForUser(user);
+
+        if (spotifyCredentials == null)
+        {
+            return null;
+        }
+        
         if (spotifyCredentials.ExpiresAt < DateTime.UtcNow)
         {
             return await RefreshAccessToken(spotifyCredentials.RefreshToken);
