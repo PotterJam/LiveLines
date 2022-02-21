@@ -17,7 +17,27 @@ public class ProfileStore : IProfileStore
         _dbExecutor = dbExecutor;
     }
 
-    public async Task<Profile> UpsertProfile(LoggedInUser user, Privacy defaultPrivacy)
+    public async Task<Profile> CreateProfile(LoggedInUser user)
+    {
+        return await _dbExecutor.ExecuteCommand(async cmd =>
+        {
+            cmd.AddParam("@userId", user.InternalId);
+
+            cmd.CommandText = @"
+                    INSERT INTO profiles (user_id)
+                    VALUES (@userId)
+                    RETURNING id;";
+
+            var guid = (Guid?) await cmd.ExecuteScalarAsync();
+
+            if (guid == null)
+                throw new ProfileStoreException("Tried to create profile, nothing got returned");
+
+            return await GetProfile(user, guid.Value);
+        });
+    }
+
+    public async Task<Profile> UpdateProfile(LoggedInUser user, Privacy defaultPrivacy)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
@@ -25,21 +45,15 @@ public class ProfileStore : IProfileStore
             cmd.AddParam("@defaultPrivacy", defaultPrivacy);
 
             cmd.CommandText = @"
-                    WITH new_user AS (
-                        INSERT INTO users (provider, username)
-                        VALUES (@provider, @username)
-                        ON CONFLICT(username) DO UPDATE
-                            SET last_login = NOW()
-                        RETURNING id
-                    ) SELECT COALESCE(
-                        (SELECT id FROM new_user),
-                        (SELECT id FROM users WHERE username = @username)
-                    ) AS id;";
+                    UPDATE profiles
+                    SET default_privacy = @defaultPrivacy
+                    WHERE user_id = @userId
+                    RETURNING id;";
 
             var guid = (Guid?) await cmd.ExecuteScalarAsync();
 
             if (guid == null)
-                throw new UserStoreException("Tried to create profile, nothing got returned");
+                throw new ProfileStoreException("Tried to update profile, nothing got returned");
 
             return await GetProfile(user, guid.Value);
         });

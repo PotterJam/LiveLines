@@ -15,12 +15,12 @@ public class ProfileService : IProfileService
 
     public async Task<Profile> CreateProfile(LoggedInUser user)
     {
-        return await _profileStore.UpsertProfile(user, Privacy.Private);
+        return await _profileStore.CreateProfile(user);
     }
 
-    public async Task<Profile> UpdateProfile(LoggedInUser user, Privacy defaultPrivacy)
+    public async Task<Profile> UpdateProfile(LoggedInUser user, ProfileToUpdate profileToUpdate)
     {
-        return await _profileStore.UpsertProfile(user, defaultPrivacy);
+        return await _profileStore.UpdateProfile(user, profileToUpdate.DefaultPrivacy);
     }
 
     public async Task<Profile> GetProfile(LoggedInUser user)
