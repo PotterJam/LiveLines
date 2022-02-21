@@ -65,11 +65,11 @@ public class LinesStore : ILinesStore
             if (guid == null)
                 throw new LinesStoreException($"Tried to create line for user {loggedInUser.InternalId}, id not returned");
 
-            return await GetLineForDate(loggedInUser, guid.Value);
+            return await GetLine(loggedInUser, guid.Value);
         });
     }
 
-    private async Task<Line> GetLineForDate(LoggedInUser loggedInUser, Guid lineId)
+    private async Task<Line> GetLine(LoggedInUser loggedInUser, Guid lineId)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
@@ -93,27 +93,31 @@ public class LinesStore : ILinesStore
         });
     }
 
-    public async Task<Line> GetLineForDate(LoggedInUser loggedInUser, DateTime date)
+    public async Task<IEnumerable<DateTime>> GetLatestLineDates(LoggedInUser loggedInUser, int limit)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
-            cmd.AddParam("@date", date.Date);
+            cmd.AddParam("@limit", limit);
             cmd.AddParam("@userId", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT l.id, l.body, l.created_at, l.date_for, s.spotify_id
-                    FROM lines l
-                    LEFT JOIN songs s on s.id = l.song_id
-                    WHERE l.user_id = @userId
-                        AND l.date_for = @date
-                    LIMIT 1;";
+                    SELECT date_for
+                    FROM lines
+                    WHERE user_id = @userId
+                    ORDER BY date_for DESC
+                    LIMIT @limit;";
 
             var reader = await cmd.ExecuteReaderAsync();
+            
+            var dates = new List<DateTime>();
+                
+            while (await reader.ReadAsync())
+            {
+                var date = reader.Get<DateTime>("date_for");
+                dates.Add(date);
+            }
 
-            if (!await reader.ReadAsync())
-                throw new LinesStoreException($"Couldn't get line on {date} for user {loggedInUser.InternalId}");
-
-            return ReadLine(reader);
+            return dates;
         });
     }
 
