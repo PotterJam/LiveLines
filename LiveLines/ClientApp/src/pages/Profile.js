@@ -24,11 +24,13 @@ export function Profile() {
   }, [user.authenticated]);
 
   return (
-    <div className="h-full flex mt-4 p-0.5 sm:p-2 flex-col items-center">
-      <div>{userInfo.username}</div>
-      <div>
-        <span>Logout</span>
-        <a href={logout}><FiLogOut className="mb-1 inline-block"/></a>
+    <div className="h-max mx-auto border border-slate-300 bg-white w-max mt-10">
+      <div className='flex flex-col items-center px-20 py-10'>
+        <div className='text-3xl pb-5'>{userInfo.username}</div>
+        <div>
+          <span>Logout</span>
+          <a href={logout}><FiLogOut className="ml-2 mb-1 inline-block"/></a>
+        </div>
       </div>
     </div>
   );

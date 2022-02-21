@@ -27,7 +27,7 @@ export function NavMenu(props) {
     return user.authenticated
       ? <div className="inline-block">
           <Link tag={Link} className="font-medium mr-3 text-lg text-slate-800" to="/profile">{user.username}</Link>
-          <GoFlame className="ml-3 mb-1 inline-block" /><span>{user.streak}</span>
+          <GoFlame className="mb-1 inline-block" /><span>{user.streak}</span>
         </div>
       : <a
           href={loginWithGithub}
