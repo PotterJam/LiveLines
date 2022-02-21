@@ -1,6 +1,5 @@
 ﻿using Extensions;
 using LiveLines.Api.Database;
-using LiveLines.Api.Lines;
 using LiveLines.Api.Spotify;
 using LiveLines.Api.Users;
 
@@ -48,8 +47,59 @@ public class SpotifyCredentialsStore : ISpotifyCredentialsStore
         });
     }
 
-    public Task UpsertCredentialsForUser(LoggedInUser user, SpotifyCredentials credentials)
+    public async Task UpsertCredentialsForUser(LoggedInUser user, SpotifyCredentials credentials)
     {
-        throw new NotImplementedException();
+        var userCredentials = await GetCredentialsForUser(user);
+        if (userCredentials == null)
+        {
+            await CreateSpotifyCredentials(user, credentials);
+        }
+        else
+        {
+            await UpdateSpotifyCredentials(user, credentials);
+        }
+    }
+
+    private async Task CreateSpotifyCredentials(LoggedInUser user, SpotifyCredentials credentials)
+    {
+        await _dbExecutor.ExecuteCommand(async cmd =>
+        {
+            cmd.AddParam("@userId", user.InternalId);
+            cmd.AddParam("@accessToken", credentials.AccessToken);
+            cmd.AddParam("@refreshToken", credentials.RefreshToken);
+            cmd.AddParam("@tokenType", credentials.TokenType);
+            cmd.AddParam("@scope", credentials.Scope);
+            cmd.AddParam("@expiresAt", credentials.ExpiresAt);
+
+            cmd.CommandText = @"
+                    INSERT INTO spotify_credentials (user_id, access_token, refresh_token, token_type, ""scope"", expires_at)
+                    VALUES (@userId, @accessToken, @refreshToken, @tokenType, @scope, @expiresAt);";
+
+            await cmd.ExecuteNonQueryAsync();
+        });
+    }
+
+    private async Task UpdateSpotifyCredentials(LoggedInUser user, SpotifyCredentials credentials)
+    {
+        await _dbExecutor.ExecuteCommand(async cmd =>
+        {
+            cmd.AddParam("@userId", user.InternalId);
+            cmd.AddParam("@accessToken", credentials.AccessToken);
+            cmd.AddParam("@refreshToken", credentials.RefreshToken);
+            cmd.AddParam("@tokenType", credentials.TokenType);
+            cmd.AddParam("@scope", credentials.Scope);
+            cmd.AddParam("@expiresAt", credentials.ExpiresAt);
+
+            cmd.CommandText = @"
+                    UPDATE spotify_credentials
+                    SET access_token = @accessToken,
+                        refresh_token = @refreshToken,
+                        token_type = @tokenType,
+                        ""scope"" = @scope,
+                        expires_at = @expiresAt
+                    WHERE user_id = @userId;";
+
+            await cmd.ExecuteNonQueryAsync();
+        });
     }
 }
