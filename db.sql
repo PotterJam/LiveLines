@@ -59,11 +59,23 @@ BEGIN;
 COMMIT;
 -- end 
 
--- v3: add privacy to lines
+-- v3: add privacy to lines and create new profiles table
 BEGIN;
+    CREATE TYPE PRIVACY AS ENUM ('Private', 'Unlisted', 'Public');
+
     ALTER TABLE lines
-    ADD COLUMN is_unlisted BOOLEAN DEFAULT FALSE,
-    ADD COLUMN is_public BOOLEAN DEFAULT FALSE
-    CONSTRAINT not_unlisted_and_private CHECK ( NOT ( is_unlisted AND is_public ) );
+    ADD COLUMN privacy PRIVACY NOT NULL DEFAULT 'Private';
+
+    CREATE TABLE profiles
+    (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        user_id UUID REFERENCES users (id) UNIQUE NOT NULL,
+        last_updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+        default_privacy PRIVACY NOT NULL DEFAULT 'Private'
+    );
+    
+    CREATE INDEX profiles_user_id_idx ON profiles (user_id);
+    
+    GRANT UPDATE, INSERT, SELECT ON TABLE profiles TO dev;
 COMMIT;
 -- end
