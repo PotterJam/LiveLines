@@ -18,8 +18,8 @@ export function LineTimeline({ lines }) {
 
     let timelineLines = [];
     for (const line of inputLines) {
-      const linesYear = format(line.createdAt, 'yyyy');
-      const linesMonth = format(line.createdAt, 'MMMM');
+      const linesYear = format(line.dateFor, 'yyyy');
+      const linesMonth = format(line.dateFor, 'MMMM');
 
       if (linesYear !== currentYear || linesMonth !== currentMonth) {
         timelineLines.push(dateHtml(linesYear, linesMonth));
@@ -33,7 +33,7 @@ export function LineTimeline({ lines }) {
     return timelineLines;
   };
   
-  const lineDataToHtml = ({ id, createdAt, message, spotifyId }) => {
+  const lineDataToHtml = ({ id, dateFor, message, spotifyId }) => {
       const spotifyLink = spotifyId && <a
         href={'https://open.spotify.com/track/' + spotifyId}
         target="_blank"
@@ -42,7 +42,7 @@ export function LineTimeline({ lines }) {
           <BsSpotify />
       </a>
 
-      const formattedCreationDate = format(createdAt, 'do');
+      const formattedCreationDate = format(dateFor, 'do');
       return (
         <CSSTransition key={id} timeout={200} classNames="timeline">
         <div className="mx-1 sm:mx-5 flex items-stretch">

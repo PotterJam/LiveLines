@@ -21,25 +21,35 @@ public class LinesController : ControllerBase
         _linesService = linesService;
     }
 
-    public record LineResponse(Guid Id, string Message, string? SpotifyId, DateTime CreatedAt);
+    public record LineResponse(Guid Id, string Message, string? SpotifyId, DateTime DateFor);
     
     [HttpGet, Route("lines")]
     public async Task<IEnumerable<LineResponse>> FetchLines()
     {
         var user = User.GetLoggedInUser();
         var lines = await _linesService.GetLines(user);
-        return lines.Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.CreatedAt));
+        return lines.Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor));
     }
 
-    public record LineRequest(string Message, string? SongId);
+    public record LineRequest(string Message, string? SongId, bool ForYesterday);
 
     [HttpPost, Route("line")]
     public async Task<LineResponse> CreateLine([FromBody] LineRequest lineRequest)
     {
         var user = User.GetLoggedInUser();
 
-        var lineToCreate = new LineToCreate(lineRequest.Message, lineRequest.SongId);
+        var lineToCreate = new LineToCreate(lineRequest.Message, lineRequest.SongId, lineRequest.ForYesterday);
         var line = await _linesService.CreateLine(user, lineToCreate);
-        return new LineResponse(line.Id, line.Message, line.SpotifyId, line.CreatedAt);
+        return new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor);
+    }
+
+    public record LineOperationsResponse(bool CanPostToday, bool CanPostYesterday);
+
+    [HttpGet, Route("line/operations")]
+    public async Task<LineOperationsResponse> FetchLineOperations()
+    {
+        var user = User.GetLoggedInUser();
+        var operations = await _linesService.GetLineOperations(user);
+        return new LineOperationsResponse(operations.CanPostToday, operations.CanPostYesterday);
     }
 }

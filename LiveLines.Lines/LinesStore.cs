@@ -25,11 +25,11 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT l.id, l.body, l.created_at, s.spotify_id
+                    SELECT l.id, l.body, l.date_for, s.spotify_id
                     FROM lines l
                     LEFT JOIN songs s on s.id = l.song_id
                     WHERE l.user_id = @userid
-                    ORDER BY created_at DESC;";
+                    ORDER BY l.date_for DESC;";
 
             var reader = await cmd.ExecuteReaderAsync();
             var lines = new List<Line>();
@@ -44,17 +44,20 @@ public class LinesStore : ILinesStore
         });
     }
 
-    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId)
+    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId, bool forYesterday)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
+            var today = DateTime.UtcNow.Date;
+            
             cmd.AddParam("@userid", loggedInUser.InternalId);
             cmd.AddParam("@body", body);
             cmd.AddParam("@songId", songId);
+            cmd.AddParam("@dateFor", forYesterday ? today.AddDays(-1) : today);
 
             cmd.CommandText = @"
-                    INSERT INTO lines (user_id, body, song_id)
-                    VALUES (@userid, @body, @songId)
+                    INSERT INTO lines (user_id, body, song_id, date_for)
+                    VALUES (@userid, @body, @songId, @dateFor)
                     RETURNING id;";
 
             var guid = (Guid?) await cmd.ExecuteScalarAsync();
@@ -74,7 +77,7 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT l.id, l.body, l.created_at, s.spotify_id
+                    SELECT l.id, l.body, l.date_for, s.spotify_id
                     FROM lines l
                     LEFT JOIN songs s on s.id = l.song_id
                     WHERE l.id = @lineid
@@ -90,13 +93,41 @@ public class LinesStore : ILinesStore
         });
     }
 
+    public async Task<IEnumerable<DateTime>> GetLatestLineDates(LoggedInUser loggedInUser, int limit)
+    {
+        return await _dbExecutor.ExecuteCommand(async cmd =>
+        {
+            cmd.AddParam("@limit", limit);
+            cmd.AddParam("@userId", loggedInUser.InternalId);
+
+            cmd.CommandText = @"
+                    SELECT date_for
+                    FROM lines
+                    WHERE user_id = @userId
+                    ORDER BY date_for DESC
+                    LIMIT @limit;";
+
+            var reader = await cmd.ExecuteReaderAsync();
+            
+            var dates = new List<DateTime>();
+                
+            while (await reader.ReadAsync())
+            {
+                var date = reader.Get<DateTime>("date_for");
+                dates.Add(date);
+            }
+
+            return dates;
+        });
+    }
+
     private Line ReadLine(DbDataReader reader)
     {
         var id = reader.Get<Guid>("id");
         var body = reader.Get<string>("body");
-        var createdAt = reader.Get<DateTime>("created_at");
+        var dateFor = reader.Get<DateTime>("date_for");
         var spotifyId = reader.GetNullable<string?>("spotify_id"); 
 
-        return new Line(id, body, spotifyId, createdAt);
+        return new Line(id, body, spotifyId, dateFor);
     }
 }
