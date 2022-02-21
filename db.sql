@@ -77,5 +77,10 @@ BEGIN;
     CREATE INDEX profiles_user_id_idx ON profiles (user_id);
     
     GRANT UPDATE, INSERT, SELECT ON TABLE profiles TO dev;
+
+    INSERT INTO profiles (user_id)
+    SELECT users.id
+    FROM users;
 COMMIT;
 -- end
+
