@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
+import { Profile } from './pages/Profile';
 import { UserContext } from './auth/UserContext';
 
 import './custom.css'
@@ -32,6 +33,7 @@ export default function App() {
     <Layout>
       <Routes>
         <Route exact path='/' element={<Home />} />
+        <Route exact path='/profile' element={<Profile />} />
       </Routes>
     </Layout>
   );

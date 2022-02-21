@@ -1,8 +1,7 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import  { UserContext } from '../auth/UserContext';
 import { FaGithub } from 'react-icons/fa';
-import { FiLogOut } from 'react-icons/fi';
 import { GoFlame } from 'react-icons/go';
 import { getData } from "../Api";
 
@@ -27,8 +26,7 @@ export function NavMenu(props) {
   const loginOrProfile = () => {
     return user.authenticated
       ? <div className="inline-block">
-          <span className="font-medium mr-3 text-lg text-slate-800">{user.username}</span>
-          <a href={logout}><FiLogOut className="mb-1 inline-block"/></a>
+          <Link tag={Link} className="font-medium mr-3 text-lg text-slate-800" to="/profile">{user.username}</Link>
           <GoFlame className="ml-3 mb-1 inline-block" /><span>{user.streak}</span>
         </div>
       : <a
