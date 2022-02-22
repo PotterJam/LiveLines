@@ -69,7 +69,7 @@ public class ProfileStore : IProfileStore
             cmd.CommandText = @"
                     SELECT p.id, p.user_id, p.line_privacy
                     FROM profiles p
-                    LEFT JOIN users u ON p.user_id = u.id
+                    JOIN users u ON p.user_id = u.id
                     WHERE p.id = @profileId
                         AND p.user_id = @userId
                     LIMIT 1;";
