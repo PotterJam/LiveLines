@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Extensions;
-using LiveLines.Api;
 using LiveLines.Api.Lines;
 using LiveLines.Api.Streaks;
 using Microsoft.AspNetCore.Authorization;
@@ -25,29 +24,34 @@ public class LinesController : ControllerBase
     }
 
     public record LineResponse(Guid Id, string Message, string? SpotifyId, DateTime DateFor);
+
+    public record FetchLinesRequest(LinePrivacy? Privacy);
     
     [HttpGet, Route("lines")]
-    public async Task<IEnumerable<LineResponse>> FetchLines()
+    public async Task<IEnumerable<LineResponse>> FetchLines([FromQuery] FetchLinesRequest fetchLinesRequest)
     {
         var user = User.GetLoggedInUser();
 
-        var lines = (await _linesService.GetLines(user))
-            .OrderByDescending(x => x.DateFor);
-        
-        return lines.Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor));
+        var lines = fetchLinesRequest.Privacy == null
+                ? await _linesService.GetLines(user)
+                : await _linesService.GetLinesWithPrivacy(user, fetchLinesRequest.Privacy.Value);
+
+        return lines
+            .OrderByDescending(l => l.DateFor)
+            .Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor));
     }
 
-    public record LineRequest(string Message, string? SongId, bool ForYesterday);
+    public record CreateLineRequest(string Message, string? SongId, bool ForYesterday, LinePrivacy Privacy);
 
     [HttpPost, Route("line")]
-    public async Task<LineResponse> CreateLine([FromBody] LineRequest lineRequest)
+    public async Task<LineResponse> CreateLine([FromBody] CreateLineRequest createLineRequest)
     {
         var user = User.GetLoggedInUser();
 
-        var lineToCreate = new LineToCreate(lineRequest.Message, lineRequest.SongId, lineRequest.ForYesterday);
+        var lineToCreate = new LineToCreate(createLineRequest.Message, createLineRequest.SongId, createLineRequest.ForYesterday, createLineRequest.Privacy);
         var line = await _linesService.CreateLine(user, lineToCreate);
 
-        await _streakService.IncrementStreak(user);
+        await _streakService.UpdateStreakForNewLine(user, lineRequest.ForYesterday);
 
         return new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor);
     }

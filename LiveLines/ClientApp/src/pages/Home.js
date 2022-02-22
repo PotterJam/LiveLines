@@ -69,7 +69,13 @@ export function Home() {
     });
     
     // update the streak in the nav bar
-    setStreak(user.streak + 1);
+    if (postYesterdayInput) {
+      const resp = await getData("api/streak");
+      const streakResp = await resp.json();
+      setStreak(streakResp.streakCount);
+    } else {
+      setStreak(user.streak + 1);
+    }
     
     const newLine = await newLineResp.json();
     const parsedNewLine = parseLine(newLine);
