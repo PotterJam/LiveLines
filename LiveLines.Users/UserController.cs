@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Extensions;
+using LiveLines.Api.Spotify;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,12 +10,23 @@ namespace LiveLines.Users;
 [ApiController, Route("api")]
 public class UserController : ControllerBase
 {
-    public record ProfileResponse(string Username);
+    private readonly ISpotifyService _spotifyService;
+
+    public UserController(ISpotifyService spotifyService)
+    {
+        _spotifyService = spotifyService;
+    }
+
+    public record ProfileResponse(string Username, bool SpotifyLoggedIn);
     
     [HttpGet, Route("user/profile")]
-    public Task<ProfileResponse> GetProfile()
+    public async Task<ProfileResponse> GetProfile()
     {
         var user = User.GetLoggedInUser();
-        return Task.FromResult(new ProfileResponse(user.Username));
+        
+        var spotifyCredentials = await _spotifyService.GetSpotifyCredentials(User.GetLoggedInUser());
+        var hasSpotifyCreds = spotifyCredentials != null;
+        
+        return new ProfileResponse(user.Username, hasSpotifyCreds);
     }
 }
