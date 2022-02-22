@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <OutputType>Library</OutputType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\LiveLines.Api\LiveLines.Api.csproj" />
+      <ProjectReference Include="..\LiveLines.Extensions\LiveLines.Extensions.csproj" />
+    </ItemGroup>
+
+</Project>

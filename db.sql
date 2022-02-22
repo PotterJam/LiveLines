@@ -57,9 +57,25 @@ BEGIN;
     ALTER TABLE lines
     ALTER COLUMN date_for SET NOT NULL;
 COMMIT;
--- end 
+-- end
 
--- v3: add privacy to lines and create new profiles table
+-- v3: create spotify table for access tokens
+BEGIN;
+    CREATE TABLE spotify_credentials
+    (
+        user_id UUID PRIMARY KEY REFERENCES users,
+        access_token TEXT NOT NULL,
+        refresh_token TEXT NOT NULL,
+        token_type TEXT NOT NULL,
+        scope TEXT NOT NULL,
+        expires_at TIMESTAMP WITH TIME ZONE NOT NULL
+    );
+
+    GRANT UPDATE, INSERT, SELECT ON TABLE spotify_credentials TO dev;
+COMMIT;
+--end
+
+-- v4: add privacy to lines and create new profiles table
 BEGIN;
     CREATE TYPE LINEPRIVACY AS ENUM ('Private', 'Unlisted', 'Public');
 
@@ -83,4 +99,3 @@ BEGIN;
     FROM users;
 COMMIT;
 -- end
-END TRANSACTION ;

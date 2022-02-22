@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveLines.Songs", "LiveLine
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveLines.Streaks", "LiveLines.Streaks\LiveLines.Streaks.csproj", "{1F603826-F85C-48E6-9FC8-B30885090D68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiveLines.Spotify", "LiveLines.Spotify\LiveLines.Spotify.csproj", "{B78595EC-840A-4CD4-8AEE-684F5AA9F0AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,5 +68,9 @@ Global
 		{1F603826-F85C-48E6-9FC8-B30885090D68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F603826-F85C-48E6-9FC8-B30885090D68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F603826-F85C-48E6-9FC8-B30885090D68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B78595EC-840A-4CD4-8AEE-684F5AA9F0AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B78595EC-840A-4CD4-8AEE-684F5AA9F0AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B78595EC-840A-4CD4-8AEE-684F5AA9F0AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B78595EC-840A-4CD4-8AEE-684F5AA9F0AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

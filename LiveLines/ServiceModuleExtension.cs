@@ -1,11 +1,13 @@
 ﻿using LiveLines.Api.Database;
 using LiveLines.Api.Lines;
 using LiveLines.Api.Songs;
+using LiveLines.Api.Spotify;
 using LiveLines.Api.Streaks;
 using LiveLines.Api.Users;
 using LiveLines.Database;
 using LiveLines.Lines;
 using LiveLines.Songs;
+using LiveLines.Spotify;
 using LiveLines.Streaks;
 using LiveLines.Users;
 
@@ -26,6 +28,8 @@ public static class ServiceModuleExtension
             .AddSingleton<ISongStore, SongStore>()
             .AddSingleton<ISongService, SongService>()
             .AddSingleton<IStreakService, StreakService>()
+            .AddSingleton<ISpotifyService, SpotifyService>()
+            .AddSingleton<ISpotifyCredentialsStore, SpotifyCredentialsStore>()
             .AddSingleton<IProfileStore, ProfileStore>()
             ;
     }
