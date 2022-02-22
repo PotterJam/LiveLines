@@ -1,6 +1,6 @@
 ﻿namespace LiveLines.Api.Lines;
 
-public enum Privacy
+public enum LinePrivacy
 {
     Private,
     Unlisted,

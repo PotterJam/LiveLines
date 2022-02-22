@@ -36,7 +36,7 @@ public class UserController : ControllerBase
     public async Task<ProfileResponse> UpdateProfile([FromBody] ProfileRequest profileRequest)
     {
         var user = User.GetLoggedInUser();
-        var linePrivacy = Enum.Parse<Privacy>(profileRequest.LinePrivacy);
+        var linePrivacy = Enum.Parse<LinePrivacy>(profileRequest.LinePrivacy);
         
         var profileToUpdate = new ProfileToUpdate(linePrivacy);
         var profile = await _userService.UpdateProfile(user, profileToUpdate);

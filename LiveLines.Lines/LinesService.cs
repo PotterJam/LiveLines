@@ -24,7 +24,7 @@ public class LinesService : ILinesService
         return await _linesStore.GetLines(loggedInUser);
     }
 
-    public async Task<IEnumerable<Line>> GetLinesWithPrivacy(LoggedInUser loggedInUser, Privacy privacy)
+    public async Task<IEnumerable<Line>> GetLinesWithPrivacy(LoggedInUser loggedInUser, LinePrivacy privacy)
     {
         return await _linesStore.GetLinesWithPrivacy(loggedInUser, privacy);
     }

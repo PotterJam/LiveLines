@@ -61,17 +61,17 @@ COMMIT;
 
 -- v3: add privacy to lines and create new profiles table
 BEGIN;
-    CREATE TYPE PRIVACY AS ENUM ('Private', 'Unlisted', 'Public');
+    CREATE TYPE LINEPRIVACY AS ENUM ('Private', 'Unlisted', 'Public');
 
     ALTER TABLE lines
-    ADD COLUMN privacy PRIVACY NOT NULL DEFAULT 'Private';
+    ADD COLUMN privacy LINEPRIVACY NOT NULL DEFAULT 'Private';
 
     CREATE TABLE profiles
     (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id UUID REFERENCES users (id) UNIQUE NOT NULL,
         last_updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-        line_privacy PRIVACY NOT NULL DEFAULT 'Private'
+        line_privacy LINEPRIVACY NOT NULL DEFAULT 'Private'
     );
     
     CREATE INDEX profiles_user_id_idx ON profiles (user_id);
@@ -83,3 +83,4 @@ BEGIN;
     FROM users;
 COMMIT;
 -- end
+END TRANSACTION ;

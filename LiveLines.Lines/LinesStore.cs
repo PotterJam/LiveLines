@@ -43,7 +43,7 @@ public class LinesStore : ILinesStore
         });
     }
 
-    public async Task<IEnumerable<Line>> GetLinesWithPrivacy(LoggedInUser loggedInUser, Privacy privacy)
+    public async Task<IEnumerable<Line>> GetLinesWithPrivacy(LoggedInUser loggedInUser, LinePrivacy privacy)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
@@ -70,7 +70,7 @@ public class LinesStore : ILinesStore
         });
     }
 
-    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId, bool forYesterday, Privacy privacy)
+    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId, bool forYesterday, LinePrivacy privacy)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
@@ -154,7 +154,7 @@ public class LinesStore : ILinesStore
         var body = reader.Get<string>("body");
         var dateFor = reader.Get<DateTime>("date_for");
         var spotifyId = reader.GetNullable<string?>("spotify_id"); 
-        var privacy = reader.GetEnum<Privacy>("privacy");
+        var privacy = reader.GetEnum<LinePrivacy>("privacy");
         
         return new Line(id, body, spotifyId, dateFor, privacy);
     }

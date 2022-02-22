@@ -37,7 +37,7 @@ public class ProfileStore : IProfileStore
         });
     }
 
-    public async Task<Profile> UpdateProfile(LoggedInUser user, Privacy linePrivacy)
+    public async Task<Profile> UpdateProfile(LoggedInUser user, LinePrivacy linePrivacy)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
@@ -108,7 +108,7 @@ public class ProfileStore : IProfileStore
     {
         var id = reader.Get<Guid>("id");
         var userId = reader.Get<Guid>("user_id"); 
-        var linePrivacy = reader.GetEnum<Privacy>("line_privacy");
+        var linePrivacy = reader.GetEnum<LinePrivacy>("line_privacy");
 
         return new Profile(id, userId, linePrivacy);
     }

@@ -7,7 +7,7 @@ namespace LiveLines.Api.Lines;
 public interface ILinesService
 {
     Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser);
-    Task<IEnumerable<Line>> GetLinesWithPrivacy(LoggedInUser loggedInUser, Privacy privacy);
+    Task<IEnumerable<Line>> GetLinesWithPrivacy(LoggedInUser loggedInUser, LinePrivacy privacy);
     Task<Line> CreateLine(LoggedInUser loggedInUser, LineToCreate lineToCreate);
     Task<LineOperations> GetLineOperations(LoggedInUser loggedInUser);
 }

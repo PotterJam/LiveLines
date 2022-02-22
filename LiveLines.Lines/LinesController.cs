@@ -25,7 +25,7 @@ public class LinesController : ControllerBase
 
     public record LineResponse(Guid Id, string Message, string? SpotifyId, DateTime DateFor);
 
-    public record FetchLinesRequest(Privacy? Privacy);
+    public record FetchLinesRequest(LinePrivacy? Privacy);
     
     [HttpGet, Route("lines")]
     public async Task<IEnumerable<LineResponse>> FetchLines([FromQuery] FetchLinesRequest fetchLinesRequest)
@@ -48,7 +48,7 @@ public class LinesController : ControllerBase
             .Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor));
     }
 
-    public record CreateLineRequest(string Message, string? SongId, bool ForYesterday, Privacy Privacy);
+    public record CreateLineRequest(string Message, string? SongId, bool ForYesterday, LinePrivacy Privacy);
 
     [HttpPost, Route("line")]
     public async Task<LineResponse> CreateLine([FromBody] CreateLineRequest createLineRequest)
