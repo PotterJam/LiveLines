@@ -80,7 +80,7 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@body", body);
             cmd.AddParam("@songId", songId);
             cmd.AddParam("@dateFor", forYesterday ? today.AddDays(-1) : today);
-            cmd.AddParam("@privacy", privacy);
+            cmd.AddEnumParam("@privacy", privacy);
 
             cmd.CommandText = @"
                     INSERT INTO lines (user_id, body, song_id, date_for, privacy)

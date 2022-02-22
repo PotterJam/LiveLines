@@ -32,17 +32,10 @@ public class LinesController : ControllerBase
     {
         var user = User.GetLoggedInUser();
 
-        IEnumerable<Line> lines;
-        
-        if (fetchLinesRequest.Privacy == null)
-        {
-            lines = await _linesService.GetLines(user);
-        }
-        else
-        {
-            lines = await _linesService.GetLinesWithPrivacy(user, fetchLinesRequest.Privacy.Value);
-        }
-        
+        var lines = fetchLinesRequest.Privacy == null
+                ? await _linesService.GetLines(user)
+                : await _linesService.GetLinesWithPrivacy(user, fetchLinesRequest.Privacy.Value);
+
         return lines
             .OrderByDescending(l => l.DateFor)
             .Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor));

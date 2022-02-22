@@ -8,7 +8,8 @@ import { PRIVACY_LEVEL } from "../components/Enum";
 export function Profile() {
   
   const { user } = useContext(UserContext);
-
+  const [hasFetchedProfile, setHasFetchedProfile] = useState(false);
+  
   const [username, setUsername] = useState("");
   const [linePrivacy, setLinePrivacy] = useState("");
   
@@ -23,6 +24,7 @@ export function Profile() {
     setUsername(profileResp.username);
     setLinePrivacy(profileResp.linePrivacy);
     setSpotifyLoggedIn(profileResp.spotifyLoggedIn);
+    setHasFetchedProfile(true);
   }
   
   useEffect(() => {
@@ -32,7 +34,7 @@ export function Profile() {
   }, [user.authenticated]);
   
   useEffect(() => {
-    if (user.authenticated) {
+    if (user.authenticated && hasFetchedProfile) {
         updateProfile();
     }
   }, [linePrivacy]);
@@ -45,7 +47,7 @@ export function Profile() {
 
   const updateProfile = async () => {
     const updatedProfileResp = await postData("api/user/profile", { 
-      linePrivacy: linePrivacy 
+      linePrivacy: linePrivacy
     });
     const updatedProfile = await updatedProfileResp.json();
     setUsername(updatedProfile.username);

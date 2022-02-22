@@ -31,7 +31,7 @@ public class ProfileStore : IProfileStore
             var profileId = (Guid?) await cmd.ExecuteScalarAsync();
 
             if (profileId == null)
-                throw new ProfileStoreException("Tried to create profile, nothing got returned");
+                throw new ProfileStoreException($"Tried to create profile for user {user.InternalId}, nothing got returned");
 
             return await GetProfile(user, profileId.Value);
         });
@@ -53,7 +53,7 @@ public class ProfileStore : IProfileStore
             var profileId = (Guid?) await cmd.ExecuteScalarAsync();
 
             if (profileId == null)
-                throw new ProfileStoreException("Tried to update profile, nothing got returned");
+                throw new ProfileStoreException($"Tried to update profile {profileId} for user {user.InternalId}, nothing got returned");
 
             return await GetProfile(user, profileId.Value);
         });
