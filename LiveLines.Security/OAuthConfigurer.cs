@@ -63,8 +63,10 @@ public class OAuthConfigurer
                 var gitHubUsername = context.Identity!.Claims.Single(x => x.Type == "urn:github:login").Value;
 
                 var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-                var user = await userService.CreateUser("GitHub", gitHubUsername);
-
+                
+                var user = await userService.GetUser("GitHub", gitHubUsername) 
+                           ?? await userService.CreateUser("GitHub", gitHubUsername);
+                
                 context.Identity.AddClaim(new Claim(LoggedInClaims.InternalUserId, user.InternalId.ToString()));
                 context.Identity.AddClaim(new Claim(LoggedInClaims.Username, user.Username));
                 

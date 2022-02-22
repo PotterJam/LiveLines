@@ -99,3 +99,10 @@ BEGIN;
     FROM users;
 COMMIT;
 -- end
+
+-- v5: rename last_login to last_active
+BEGIN;
+    ALTER TABLE users
+    RENAME COLUMN last_login TO last_active;
+COMMIT;
+-- end
