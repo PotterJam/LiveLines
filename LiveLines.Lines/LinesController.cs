@@ -51,7 +51,7 @@ public class LinesController : ControllerBase
         var lineToCreate = new LineToCreate(createLineRequest.Message, createLineRequest.SongId, createLineRequest.ForYesterday, createLineRequest.Privacy);
         var line = await _linesService.CreateLine(user, lineToCreate);
 
-        await _streakService.UpdateStreakForNewLine(user, lineRequest.ForYesterday);
+        await _streakService.UpdateStreakForNewLine(user, lineToCreate.ForYesterday);
 
         return new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor);
     }
