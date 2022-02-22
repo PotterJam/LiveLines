@@ -24,26 +24,38 @@ public class LinesController : ControllerBase
     }
 
     public record LineResponse(Guid Id, string Message, string? SpotifyId, DateTime DateFor);
+
+    public record FetchLinesRequest(Privacy? Privacy);
     
     [HttpGet, Route("lines")]
-    public async Task<IEnumerable<LineResponse>> FetchLines(Privacy privacy)
+    public async Task<IEnumerable<LineResponse>> FetchLines([FromQuery] FetchLinesRequest fetchLinesRequest)
     {
         var user = User.GetLoggedInUser();
 
-        var lines = (await _linesService.GetLines(user, privacy))
-            .OrderByDescending(x => x.DateFor);
+        IEnumerable<Line> lines;
         
-        return lines.Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor));
+        if (fetchLinesRequest.Privacy == null)
+        {
+            lines = await _linesService.GetLines(user);
+        }
+        else
+        {
+            lines = await _linesService.GetLinesWithPrivacy(user, fetchLinesRequest.Privacy.Value);
+        }
+        
+        return lines
+            .OrderByDescending(l => l.DateFor)
+            .Select(line => new LineResponse(line.Id, line.Message, line.SpotifyId, line.DateFor));
     }
 
-    public record LineRequest(string Message, string? SongId, bool ForYesterday, Privacy Privacy);
+    public record CreateLineRequest(string Message, string? SongId, bool ForYesterday, Privacy Privacy);
 
     [HttpPost, Route("line")]
-    public async Task<LineResponse> CreateLine([FromBody] LineRequest lineRequest)
+    public async Task<LineResponse> CreateLine([FromBody] CreateLineRequest createLineRequest)
     {
         var user = User.GetLoggedInUser();
 
-        var lineToCreate = new LineToCreate(lineRequest.Message, lineRequest.SongId, lineRequest.ForYesterday, lineRequest.Privacy);
+        var lineToCreate = new LineToCreate(createLineRequest.Message, createLineRequest.SongId, createLineRequest.ForYesterday, createLineRequest.Privacy);
         var line = await _linesService.CreateLine(user, lineToCreate);
 
         await _streakService.IncrementStreak(user);

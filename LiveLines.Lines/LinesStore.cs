@@ -43,6 +43,33 @@ public class LinesStore : ILinesStore
         });
     }
 
+    public async Task<IEnumerable<Line>> GetLinesWithPrivacy(LoggedInUser loggedInUser, Privacy privacy)
+    {
+        return await _dbExecutor.ExecuteCommand(async cmd =>
+        {
+            cmd.AddParam("@userId", loggedInUser.InternalId);
+            cmd.AddEnumParam("@privacy", privacy);
+
+            cmd.CommandText = @"
+                    SELECT l.id, l.body, l.date_for, s.spotify_id, l.privacy
+                    FROM lines l
+                    LEFT JOIN songs s on s.id = l.song_id
+                    WHERE l.user_id = @userid
+                        AND l.privacy = @privacy;";
+
+            var reader = await cmd.ExecuteReaderAsync();
+            var lines = new List<Line>();
+            
+            while (await reader.ReadAsync())
+            {
+                var line = ReadLine(reader);
+                lines.Add(line);
+            }
+
+            return lines;
+        });
+    }
+
     public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId, bool forYesterday, Privacy privacy)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>

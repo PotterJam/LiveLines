@@ -19,16 +19,14 @@ public class LinesService : ILinesService
         _songService = songService;
     }
 
-    public async Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser, Privacy? privacy)
+    public async Task<IEnumerable<Line>> GetLines(LoggedInUser loggedInUser)
     {
-        var lines = await _linesStore.GetLines(loggedInUser);
-        
-        if (privacy == null)
-        {
-            return lines;
-        }
+        return await _linesStore.GetLines(loggedInUser);
+    }
 
-        return lines.Where(line => line.Privacy == privacy);
+    public async Task<IEnumerable<Line>> GetLinesWithPrivacy(LoggedInUser loggedInUser, Privacy privacy)
+    {
+        return await _linesStore.GetLinesWithPrivacy(loggedInUser, privacy);
     }
 
     public async Task<Line> CreateLine(LoggedInUser user, LineToCreate lineToCreate)
