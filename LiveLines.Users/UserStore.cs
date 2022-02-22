@@ -57,7 +57,7 @@ public class UserStore : IUserStore
             if (!await reader.ReadAsync())
                 return null;
             
-            LoggedInUser user = ReadUser(reader);
+            var user = ReadUser(reader);
 
             await UpdateLastActive(user.InternalId);
 

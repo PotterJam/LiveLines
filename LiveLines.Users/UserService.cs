@@ -17,7 +17,7 @@ public class UserService : IUserService
     public async Task<LoggedInUser> CreateUser(string provider, string username)
     {
         LoggedInUser user = await _userStore.CreateUser(provider, username);
-        Profile profile = await _profileStore.CreateProfile(user);
+        var profile = await _profileStore.CreateProfile(user);
         
         return user;
     }
