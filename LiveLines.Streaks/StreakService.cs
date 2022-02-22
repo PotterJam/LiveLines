@@ -41,7 +41,6 @@ public class StreakService : IStreakService
             GetStreakCacheKey(user),
             async cacheEntry =>
             {
-                
                 cacheEntry.AbsoluteExpiration = GenerateStreakExpiry();
                 return await GetStreakCount(user);
             });
