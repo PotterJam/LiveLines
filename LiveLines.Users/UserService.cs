@@ -17,14 +17,14 @@ public class UserService : IUserService
     public async Task<LoggedInUser> CreateUser(string provider, string username)
     {
         LoggedInUser user = await _userStore.CreateUser(provider, username);
-        await _profileStore.CreateProfile(user);
+        var profile = await _profileStore.CreateProfile(user);
         
         return user;
     }
 
-    public async Task<LoggedInUser> GetUser(string username)
+    public async Task<LoggedInUser?> GetUser(string provider, string username)
     {
-        return await _userStore.GetUser(username);
+        return await _userStore.GetUser(provider, username);
     }
         
     public async Task<LoggedInUser> GetUser(int userId)
