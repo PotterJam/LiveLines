@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json.Serialization;
 using LiveLines.Api.Spotify;
 using LiveLines.Api.Users;
@@ -31,7 +32,10 @@ public class SpotifyService : ISpotifyService
         
         if (spotifyCredentials.ExpiresAt < DateTime.UtcNow)
         {
-            return await RefreshAccessToken(spotifyCredentials.RefreshToken);
+            var refreshedSpotifyCredentials = await RefreshAccessToken(spotifyCredentials.RefreshToken);
+            await _spotifyCredentialsStore.UpsertCredentialsForUser(user, refreshedSpotifyCredentials);
+            
+            return refreshedSpotifyCredentials;
         }
 
         return spotifyCredentials;
@@ -79,7 +83,7 @@ public class SpotifyService : ISpotifyService
         var request = new HttpRequestMessage(HttpMethod.Post, "https://accounts.spotify.com/api/token");
         request.Content = new FormUrlEncodedContent(data);
 
-        var authValue = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{_spotifyClientId}:{_spotifyClientSecret}"));
+        var authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_spotifyClientId}:{_spotifyClientSecret}"));
         request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 
         var response = await HttpClient.SendAsync(request);
