@@ -5,7 +5,7 @@ namespace LiveLines.Api.Streaks;
 
 public interface IStreakService
 {
-    Task<int> IncrementStreak(LoggedInUser user);
+    Task<int> UpdateStreakForNewLine(LoggedInUser user, bool forYesterday);
 
-    Task<int> GetStreak(LoggedInUser user);
+    Task<int> GetOrCreateStreak(LoggedInUser user);
 }

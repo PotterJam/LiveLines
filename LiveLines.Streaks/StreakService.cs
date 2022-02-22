@@ -20,20 +20,29 @@ public class StreakService : IStreakService
 
     private string GetStreakCacheKey(LoggedInUser user) => StreakCachePrefix + user.InternalId;
 
-    public async Task<int> IncrementStreak(LoggedInUser user)
+    // We want it to expire at midnight the day after tomorrow, midnight makes this confusing.
+    private DateTimeOffset GenerateStreakExpiry() => DateTime.UtcNow.AddDays(2).Date;
+    
+    public async Task<int> UpdateStreakForNewLine(LoggedInUser user, bool forYesterday)
     {
-        var newStreak = await GetStreak(user) + 1;
-        return _expiringStreakCache.Set(GetStreakCacheKey(user), newStreak);
+        var streakCacheKey = GetStreakCacheKey(user);
+        if (!forYesterday && _expiringStreakCache.TryGetValue(streakCacheKey, out int currentStreak))
+        {
+            return _expiringStreakCache.Set(streakCacheKey, currentStreak + 1, GenerateStreakExpiry());
+        }
+
+        var streak = await GetStreakCount(user);
+        return _expiringStreakCache.Set(streakCacheKey, streak, GenerateStreakExpiry());
     }
 
-    public async Task<int> GetStreak(LoggedInUser user)
+    public async Task<int> GetOrCreateStreak(LoggedInUser user)
     {
         return await _expiringStreakCache.GetOrCreateAsync(
             GetStreakCacheKey(user),
             async cacheEntry =>
             {
-                // We want it to expire at midnight the day after tomorrow, midnight makes this confusing.
-                cacheEntry.AbsoluteExpiration = DateTime.UtcNow.AddDays(2).Date;
+                
+                cacheEntry.AbsoluteExpiration = GenerateStreakExpiry();
                 return await GetStreakCount(user);
             });
     }
