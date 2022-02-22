@@ -12,11 +12,11 @@ namespace LiveLines.Users;
 [ApiController, Route("api")]
 public class UserController : ControllerBase
 {
-    private readonly IProfileService _profileService;
+    private readonly IUserService _userService;
 
-    public UserController(IProfileService profileService)
+    public UserController(IUserService userService)
     {
-        _profileService = profileService;
+        _userService = userService;
     }
     
     public record ProfileResponse(string Username, string LinePrivacy);
@@ -25,7 +25,7 @@ public class UserController : ControllerBase
     public async Task<ProfileResponse> GetProfile()
     {
         var user = User.GetLoggedInUser();
-        var profile = await _profileService.GetProfile(user);
+        var profile = await _userService.GetProfile(user);
         
         return new ProfileResponse(user.Username, profile.LinePrivacy.ToString());
     }
@@ -39,7 +39,7 @@ public class UserController : ControllerBase
         var linePrivacy = Enum.Parse<Privacy>(profileRequest.LinePrivacy);
         
         var profileToUpdate = new ProfileToUpdate(linePrivacy);
-        var profile = await _profileService.UpdateProfile(user, profileToUpdate);
+        var profile = await _userService.UpdateProfile(user, profileToUpdate);
         
         return new ProfileResponse(user.Username, profile.LinePrivacy.ToString());
     }
