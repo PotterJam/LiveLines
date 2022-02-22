@@ -21,7 +21,7 @@ public class StreakController : ControllerBase
     [HttpGet, Route("streak")]
     public async Task<StreakResponse> GetStreak()
     {
-        var streak = await _streakService.GetStreak(User.GetLoggedInUser());
+        var streak = await _streakService.GetOrCreateStreak(User.GetLoggedInUser());
         return new StreakResponse(streak);
     }
 }
