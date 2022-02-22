@@ -28,12 +28,12 @@ public class ProfileStore : IProfileStore
                     VALUES (@userId)
                     RETURNING id;";
 
-            var guid = (Guid?) await cmd.ExecuteScalarAsync();
+            var profileId = (Guid?) await cmd.ExecuteScalarAsync();
 
-            if (guid == null)
+            if (profileId == null)
                 throw new ProfileStoreException("Tried to create profile, nothing got returned");
 
-            return await GetProfile(user, guid.Value);
+            return await GetProfile(user, profileId.Value);
         });
     }
 
@@ -50,12 +50,12 @@ public class ProfileStore : IProfileStore
                     WHERE user_id = @userId
                     RETURNING id;";
 
-            var guid = (Guid?) await cmd.ExecuteScalarAsync();
+            var profileId = (Guid?) await cmd.ExecuteScalarAsync();
 
-            if (guid == null)
+            if (profileId == null)
                 throw new ProfileStoreException("Tried to update profile, nothing got returned");
 
-            return await GetProfile(user, guid.Value);
+            return await GetProfile(user, profileId.Value);
         });
     }
     
