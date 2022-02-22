@@ -1,3 +1,3 @@
-﻿namespace LiveLines.Api;
+﻿namespace LiveLines.Api.Lines;
 
-public record LineToCreate(string Body, string? SpotifySongId, bool ForYesterday);
+public record LineToCreate(string Body, string? SpotifySongId, bool ForYesterday, LinePrivacy Privacy);

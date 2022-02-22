@@ -74,3 +74,28 @@ BEGIN;
     GRANT UPDATE, INSERT, SELECT ON TABLE spotify_credentials TO dev;
 COMMIT;
 --end
+
+-- v4: add privacy to lines and create new profiles table
+BEGIN;
+    CREATE TYPE LINEPRIVACY AS ENUM ('Private', 'Unlisted', 'Public');
+
+    ALTER TABLE lines
+    ADD COLUMN privacy LINEPRIVACY NOT NULL DEFAULT 'Private';
+
+    CREATE TABLE profiles
+    (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        user_id UUID REFERENCES users (id) UNIQUE NOT NULL,
+        last_updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+        line_privacy LINEPRIVACY NOT NULL DEFAULT 'Private'
+    );
+    
+    CREATE INDEX profiles_user_id_idx ON profiles (user_id);
+    
+    GRANT UPDATE, INSERT, SELECT ON TABLE profiles TO dev;
+
+    INSERT INTO profiles (user_id)
+    SELECT users.id
+    FROM users;
+COMMIT;
+-- end

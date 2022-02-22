@@ -25,7 +25,7 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT l.id, l.body, l.date_for, s.spotify_id
+                    SELECT l.id, l.body, l.date_for, s.spotify_id, l.privacy
                     FROM lines l
                     LEFT JOIN songs s on s.id = l.song_id
                     WHERE l.user_id = @userid;";
@@ -43,7 +43,34 @@ public class LinesStore : ILinesStore
         });
     }
 
-    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId, bool forYesterday)
+    public async Task<IEnumerable<Line>> GetLinesWithPrivacy(LoggedInUser loggedInUser, LinePrivacy privacy)
+    {
+        return await _dbExecutor.ExecuteCommand(async cmd =>
+        {
+            cmd.AddParam("@userId", loggedInUser.InternalId);
+            cmd.AddEnumParam("@privacy", privacy);
+
+            cmd.CommandText = @"
+                    SELECT l.id, l.body, l.date_for, s.spotify_id, l.privacy
+                    FROM lines l
+                    LEFT JOIN songs s on s.id = l.song_id
+                    WHERE l.user_id = @userid
+                        AND l.privacy = @privacy;";
+
+            var reader = await cmd.ExecuteReaderAsync();
+            var lines = new List<Line>();
+            
+            while (await reader.ReadAsync())
+            {
+                var line = ReadLine(reader);
+                lines.Add(line);
+            }
+
+            return lines;
+        });
+    }
+
+    public async Task<Line> CreateLine(LoggedInUser loggedInUser, string body, Guid? songId, bool forYesterday, LinePrivacy privacy)
     {
         return await _dbExecutor.ExecuteCommand(async cmd =>
         {
@@ -53,10 +80,11 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@body", body);
             cmd.AddParam("@songId", songId);
             cmd.AddParam("@dateFor", forYesterday ? today.AddDays(-1) : today);
+            cmd.AddEnumParam("@privacy", privacy);
 
             cmd.CommandText = @"
-                    INSERT INTO lines (user_id, body, song_id, date_for)
-                    VALUES (@userid, @body, @songId, @dateFor)
+                    INSERT INTO lines (user_id, body, song_id, date_for, privacy)
+                    VALUES (@userid, @body, @songId, @dateFor, @privacy)
                     RETURNING id;";
 
             var guid = (Guid?) await cmd.ExecuteScalarAsync();
@@ -76,7 +104,7 @@ public class LinesStore : ILinesStore
             cmd.AddParam("@userid", loggedInUser.InternalId);
 
             cmd.CommandText = @"
-                    SELECT l.id, l.body, l.date_for, s.spotify_id
+                    SELECT l.id, l.body, l.date_for, s.spotify_id, l.privacy
                     FROM lines l
                     LEFT JOIN songs s on s.id = l.song_id
                     WHERE l.id = @lineid
@@ -126,7 +154,8 @@ public class LinesStore : ILinesStore
         var body = reader.Get<string>("body");
         var dateFor = reader.Get<DateTime>("date_for");
         var spotifyId = reader.GetNullable<string?>("spotify_id"); 
-
-        return new Line(id, body, spotifyId, dateFor);
+        var privacy = reader.GetEnum<LinePrivacy>("privacy");
+        
+        return new Line(id, body, spotifyId, dateFor, privacy);
     }
 }

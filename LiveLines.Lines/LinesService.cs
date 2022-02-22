@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using LiveLines.Api;
 using LiveLines.Api.Lines;
 using LiveLines.Api.Songs;
 using LiveLines.Api.Users;
@@ -27,6 +24,11 @@ public class LinesService : ILinesService
         return await _linesStore.GetLines(loggedInUser);
     }
 
+    public async Task<IEnumerable<Line>> GetLinesWithPrivacy(LoggedInUser loggedInUser, LinePrivacy privacy)
+    {
+        return await _linesStore.GetLinesWithPrivacy(loggedInUser, privacy);
+    }
+
     public async Task<Line> CreateLine(LoggedInUser user, LineToCreate lineToCreate)
     {
         // TODO: will need to validate the song id input (don't send an invalid input to the below)
@@ -36,7 +38,7 @@ public class LinesService : ILinesService
             ? await _songService.AddSong(lineToCreate.SpotifySongId)
             : null;
 
-        return await _linesStore.CreateLine(user, lineToCreate.Body, songId, lineToCreate.ForYesterday);
+        return await _linesStore.CreateLine(user, lineToCreate.Body, songId, lineToCreate.ForYesterday, lineToCreate.Privacy);
     }
 
     public async Task<LineOperations> GetLineOperations(LoggedInUser loggedInUser)

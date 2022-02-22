@@ -30,6 +30,7 @@ public static class ServiceModuleExtension
             .AddSingleton<IStreakService, StreakService>()
             .AddSingleton<ISpotifyService, SpotifyService>()
             .AddSingleton<ISpotifyCredentialsStore, SpotifyCredentialsStore>()
+            .AddSingleton<IProfileStore, ProfileStore>()
             ;
     }
 }
