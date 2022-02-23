@@ -20,6 +20,9 @@ public class SpotifyService : ISpotifyService
         _spotifyClientSecret = configuration.GetValue<string>("SPOTIFY_CLIENT_SECRET");
         _spotifyCredentialsStore = spotifyCredentialsStore;
     }
+    
+    // give 5 minutes of leeway
+    private DateTime GenerateAccessTokenExpiry(int expiresInSeconds) => DateTime.UtcNow.AddSeconds(expiresInSeconds - 60 * 5);
 
     public async Task<SpotifyCredentials?> GetSpotifyCredentials(LoggedInUser user)
     {
@@ -32,7 +35,9 @@ public class SpotifyService : ISpotifyService
         
         if (spotifyCredentials.ExpiresAt < DateTime.UtcNow)
         {
+            // TODO: if this fails, remove the credentials from the database, as it means they've unauthorized the app
             var refreshedSpotifyCredentials = await RefreshAccessToken(spotifyCredentials.RefreshToken);
+            
             await _spotifyCredentialsStore.UpsertCredentialsForUser(user, refreshedSpotifyCredentials);
             
             return refreshedSpotifyCredentials;
@@ -41,17 +46,17 @@ public class SpotifyService : ISpotifyService
         return spotifyCredentials;
     }
 
-    private async Task<SpotifyCredentials> RefreshAccessToken(string refreshTokenRequest)
+    private async Task<SpotifyCredentials> RefreshAccessToken(string refreshToken)
     {
         var data = new Dictionary<string, string>
         {
-            {"refresh_token", refreshTokenRequest},
+            {"refresh_token", refreshToken},
             {"grant_type", "refresh_token"},
         };
 
-        var credentialsResponse = await GetSpotifyCredentialsFromOptions(data);
-
-        return GetCredentialsFromResponse(credentialsResponse);
+        // refresh doesn't give you another refresh token, so use the same one until they unauthorize the app
+        var (accessToken, tokenType, scope, expiresIn, _) = await GetSpotifyCredentialsFromOptions(data);
+        return new SpotifyCredentials(accessToken, tokenType, scope, GenerateAccessTokenExpiry(expiresIn), refreshToken);
     }
 
     public async Task UpsertSpotifyCredentials(LoggedInUser user, string code, string redirectUrl)
@@ -63,19 +68,14 @@ public class SpotifyService : ISpotifyService
             {"redirect_uri", redirectUrl},
         };
 
-        var credentialsResponse = await GetSpotifyCredentialsFromOptions(data);
-        var spotifyCredentials = GetCredentialsFromResponse(credentialsResponse);
+        var (accessToken, tokenType, scope, expiresIn, refreshToken) = await GetSpotifyCredentialsFromOptions(data);
+
+        if (refreshToken == null)
+            throw new ArgumentNullException(nameof(refreshToken), "Refresh token missing when retrieving Spotify credentials from the authorization request.");
+        
+        var spotifyCredentials = new SpotifyCredentials(accessToken, tokenType, scope, GenerateAccessTokenExpiry(expiresIn), refreshToken);
 
         await _spotifyCredentialsStore.UpsertCredentialsForUser(user, spotifyCredentials);
-    }
-    
-    private SpotifyCredentials GetCredentialsFromResponse(SpotifyCredentialsResponse credentialsResponse)
-    {
-        var (accessToken, tokenType, scope, expiresIn, refreshToken) = credentialsResponse;
-        
-        // give 5 minutes of leeway
-        var expiresAt = DateTime.UtcNow.AddSeconds(expiresIn - 60 * 5);
-        return new SpotifyCredentials(accessToken, tokenType, scope, expiresAt, refreshToken);
     }
 
     private async Task<SpotifyCredentialsResponse> GetSpotifyCredentialsFromOptions(Dictionary<string, string> data)
@@ -103,5 +103,5 @@ public class SpotifyService : ISpotifyService
         [property: JsonPropertyName("token_type")] string TokenType,
         [property: JsonPropertyName("scope")] string Scope,
         [property: JsonPropertyName("expires_in")] int ExpiresIn,
-        [property: JsonPropertyName("refresh_token")] string RefreshToken);
+        [property: JsonPropertyName("refresh_token")] string? RefreshToken);
 }
