@@ -3,7 +3,7 @@ import { FiLogOut } from 'react-icons/fi';
 import { getData, postData } from "../Api";
 import { UserContext } from '../auth/UserContext';
 import { BsSpotify } from 'react-icons/bs';
-import { PRIVACY_LEVEL } from "../components/Enum";
+import { PRIVACY_LEVEL } from "../components/PrivacyLevel";
 
 export function Profile() {
   
