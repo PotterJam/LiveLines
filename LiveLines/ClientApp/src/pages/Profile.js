@@ -14,6 +14,7 @@ export function Profile() {
   const [linePrivacy, setLinePrivacy] = useState("");
   
   const [spotifyLoggedIn, setSpotifyLoggedIn] = useState(false);
+  const [recentTracks, setRecentTracks] = useState('');
 
   const loginSpotify = 'api/spotify/login';
   const logout = 'api/logout';
@@ -25,6 +26,12 @@ export function Profile() {
     setLinePrivacy(profileResp.linePrivacy);
     setSpotifyLoggedIn(profileResp.spotifyLoggedIn);
     setHasFetchedProfile(true);
+
+    if (profileResp.spotifyLoggedIn) {
+      const resp = await getData("api/spotify/tracks/recent");
+      const recentTracksResp = await resp.json();
+      setRecentTracks(JSON.stringify(recentTracksResp));
+    }
   }
   
   useEffect(() => {
@@ -41,7 +48,11 @@ export function Profile() {
 
   const spotifyLoginOrStatus = () => {
     return spotifyLoggedIn
-      ? <span className='pb-3'>Logged into Spotify<BsSpotify className="ml-2 mb-1 inline-block"/></span>
+      ? <div>
+          <span className='pb-3'>Logged into Spotify<BsSpotify className="ml-2 mb-1 inline-block"/></span>
+          <br />
+          <div>{recentTracks}</div>
+        </div>
       : <a className='pb-3' href={loginSpotify}>Login to Spotify<BsSpotify className="ml-2 mb-1 inline-block"/></a>
   }
 

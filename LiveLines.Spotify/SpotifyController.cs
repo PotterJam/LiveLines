@@ -1,4 +1,5 @@
-﻿using Extensions;
+﻿using System.Collections;
+using Extensions;
 using LiveLines.Api.Spotify;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -25,10 +26,21 @@ public class SpotifyController : ControllerBase
         _profileCallbackUrl = hostName + "/profile";
     }
 
+    public record SpotifyTrackResponse(string Name);
+
+    [Route("spotify/tracks/recent")]
+    public async Task<IEnumerable<SpotifyTrackResponse>> GetRecentSpotifyTracks()
+    {
+        var recentlyPlayed = await _spotifyService.GetRecentlyPlayed(User.GetLoggedInUser());
+        return recentlyPlayed.Select(x => new SpotifyTrackResponse(x.Name));
+    }
+
     [Route("spotify/login")]
     public IActionResult Login()
     {
-        const string scope = "user-read-private user-read-email";
+        const string scope = "user-read-currently-playing"
+            + " user-read-recently-played"
+            + " user-read-email";
 
         var query = new QueryBuilder
         {
